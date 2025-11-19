@@ -139,7 +139,6 @@
 		max-width: 960px;
 		margin: 0 auto;
 		padding: 2rem 1.5rem 3rem;
-		background: #020617;
 		font-family:
 			system-ui,
 			-apple-system,
