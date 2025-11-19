@@ -13,7 +13,6 @@
 	<div class="bg-shapes" aria-hidden="true">
 		<div class="bg-shape bg-shape--cyan"></div>
 		<div class="bg-shape bg-shape--amber"></div>
-		<div class="bg-shape bg-shape--pink"></div>
 	</div>
 
 	<header class="site-nav">
@@ -84,7 +83,7 @@
 
 	.bg-shapes {
 		position: fixed;
-		inset: -10%;
+		inset: -4%;
 		pointer-events: none;
 		z-index: -2;
 		overflow: hidden;
@@ -92,7 +91,7 @@
 
 	.bg-shape {
 		position: absolute;
-		width: min(460px, 60vw);
+		width: min(520px, 80vw);
 		aspect-ratio: 4 / 3;
 		border-radius: 999px;
 		filter: blur(32px);
@@ -102,8 +101,8 @@
 	}
 
 	.bg-shape--cyan {
-		top: -10%;
-		left: -8%;
+		top: -4%;
+		left: -2%;
 		background:
 			radial-gradient(circle at 10% 0%, rgba(244, 244, 245, 0.22), transparent 52%),
 			radial-gradient(circle at 0% 100%, rgba(56, 189, 248, 0.9), transparent 65%),
@@ -112,23 +111,13 @@
 	}
 
 	.bg-shape--amber {
-		top: -4%;
-		right: -14%;
+		top: -2%;
+		right: -6%;
 		background:
 			radial-gradient(circle at 0% 0%, rgba(254, 249, 195, 0.3), transparent 45%),
 			radial-gradient(circle at 10% 90%, rgba(248, 113, 22, 0.9), transparent 70%),
 			radial-gradient(circle at 90% 10%, rgba(234, 179, 8, 0.85), transparent 70%);
 		animation: float-blob-2 30s ease-in-out infinite alternate;
-	}
-
-	.bg-shape--pink {
-		bottom: -18%;
-		right: 4%;
-		background:
-			radial-gradient(circle at 5% 0%, rgba(251, 113, 133, 0.5), transparent 40%),
-			radial-gradient(circle at 80% 90%, rgba(192, 132, 252, 0.9), transparent 70%),
-			radial-gradient(circle at 0% 90%, rgba(244, 114, 182, 0.85), transparent 70%);
-		animation: float-blob-3 34s ease-in-out infinite alternate;
 	}
 
 	@keyframes float-blob-1 {
@@ -155,15 +144,20 @@
 		}
 	}
 
-	@keyframes float-blob-3 {
-		0% {
-			transform: translate3d(0, 0, 0) scale(1);
+	@media (max-width: 640px) {
+		.bg-shape {
+			width: 120%;
+			filter: blur(36px);
 		}
-		50% {
-			transform: translate3d(-16px, -10px, 0) scale(1.06);
+
+		.bg-shape--cyan {
+			top: -8%;
+			left: -18%;
 		}
-		100% {
-			transform: translate3d(4px, -22px, 0) scale(1.02);
+
+		.bg-shape--amber {
+			top: 28%;
+			right: -24%;
 		}
 	}
 
