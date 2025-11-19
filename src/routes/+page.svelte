@@ -1,15 +1,17 @@
 <script lang="ts">
 	let { data } = $props<{
 		data: {
-			activities: {
-				id: number;
-				name: string;
-				distance: number;
-				moving_time: number;
-				elapsed_time: number;
-				sport_type: string;
-				start_date: string;
-			}[] | null;
+			activities:
+				| {
+						id: number;
+						name: string;
+						distance: number;
+						moving_time: number;
+						elapsed_time: number;
+						sport_type: string;
+						start_date: string;
+				  }[]
+				| null;
 			needsAuth: boolean;
 			errorMessage?: string;
 		};
@@ -45,8 +47,9 @@
 			<h1>My Strava activities</h1>
 			<p>Single-user view of recent activities fetched from the Strava API.</p>
 		</div>
-
-		<a class="button" href="/auth/strava">Connect / Re-authorize Strava</a>
+		{#if data.needsAuth}
+			<a class="button" href="/auth/strava">Connect / Re-authorize Strava</a>
+		{/if}
 	</section>
 
 	{#if data.errorMessage}
@@ -95,7 +98,12 @@
 		max-width: 900px;
 		margin: 0 auto;
 		padding: 2rem 1.5rem 3rem;
-		font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		font-family:
+			system-ui,
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			sans-serif;
 		color: #e5e7eb;
 	}
 
@@ -210,4 +218,3 @@
 		color: #9ca3af;
 	}
 </style>
-
