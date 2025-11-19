@@ -1,0 +1,142 @@
+[
+    {
+        "week_begin": "24/11/2025",
+        "week_end": "30/11/2025",
+        "training1": "7 km easy run",
+        "training2": "8 km steady run",
+        "training3": "10 km long run"
+    },
+    {
+        "week_begin": "1/12/2025",
+        "week_end": "7/12/2025",
+        "training1": "7 km easy run",
+        "training2": "8 km steady run",
+        "training3": "12 km long run"
+    },
+    {
+        "week_begin": "8/12/2025",
+        "week_end": "14/12/2025",
+        "training1": "8 km easy run",
+        "training2": "8 km steady run",
+        "training3": "13 km long run"
+    },
+    {
+        "week_begin": "15/12/2025",
+        "week_end": "21/12/2025",
+        "training1": "7 km easy run",
+        "training2": "8 km steady run",
+        "training3": "11 km long run"
+    },
+    {
+        "week_begin": "22/12/2025",
+        "week_end": "28/12/2025",
+        "training1": "7 km easy run",
+        "training2": "8 km steady run",
+        "training3": "13 km long run"
+    },
+    {
+        "week_begin": "29/12/2025",
+        "week_end": "4/1/2026",
+        "training1": "8 km easy run",
+        "training2": "9 km steady run",
+        "training3": "13 km long run"
+    },
+    {
+        "week_begin": "5/1/2026",
+        "week_end": "11/1/2026",
+        "training1": "8 km easy run",
+        "training2": "9 km steady run",
+        "training3": "16 km long run"
+    },
+    {
+        "week_begin": "12/1/2026",
+        "week_end": "18/1/2026",
+        "training1": "8 km easy run",
+        "training2": "8 km steady run",
+        "training3": "13 km long run"
+    },
+    {
+        "week_begin": "19/1/2026",
+        "week_end": "25/1/2026",
+        "training1": "8 km easy run",
+        "training2": "9 km steady run",
+        "training3": "14 km long run"
+    },
+    {
+        "week_begin": "26/1/2026",
+        "week_end": "1/2/2026",
+        "training1": "8 km easy run",
+        "training2": "10 km steady run",
+        "training3": "16 km long run"
+    },
+    {
+        "week_begin": "2/2/2026",
+        "week_end": "8/2/2026",
+        "training1": "10 km easy run",
+        "training2": "9 km steady run",
+        "training3": "18 km long run"
+    },
+    {
+        "week_begin": "9/2/2026",
+        "week_end": "15/2/2026",
+        "training1": "10 km easy run",
+        "training2": "8 km steady run",
+        "training3": "15 km long run"
+    },
+    {
+        "week_begin": "16/2/2026",
+        "week_end": "22/2/2026",
+        "training1": "10 km easy run",
+        "training2": "10 km steady run",
+        "training3": "16 km long run"
+    },
+    {
+        "week_begin": "23/2/2026",
+        "week_end": "1/3/2026",
+        "training1": "10 km easy run",
+        "training2": "10 km steady run",
+        "training3": "19 km long run"
+    },
+    {
+        "week_begin": "2/3/2026",
+        "week_end": "8/3/2026",
+        "training1": "12 km easy run",
+        "training2": "9 km steady run",
+        "training3": "21 km long run"
+    },
+    {
+        "week_begin": "9/3/2026",
+        "week_end": "15/3/2026",
+        "training1": "10 km easy run",
+        "training2": "8 km steady run",
+        "training3": "19 km long run"
+    },
+    {
+        "week_begin": "16/3/2026",
+        "week_end": "22/3/2026",
+        "training1": "10 km easy run",
+        "training2": "11 km steady run",
+        "training3": "20 km long run"
+    },
+    {
+        "week_begin": "23/3/2026",
+        "week_end": "29/3/2026",
+        "training1": "10 km easy run",
+        "training2": "10 km steady run",
+        "training3": "25 km long run"
+    },
+    {
+        "week_begin": "30/3/2026",
+        "week_end": "5/4/2026",
+        "training1": "6 km easy run",
+        "training2": "8 km steady run",
+        "training3": "16 km long run"
+    },
+    {
+        "week_begin": "6/4/2026",
+        "week_end": "12/4/2026",
+        "training1": "6 km easy run",
+        "training2": "4 km steady run",
+        "training3": "42 km Marathon"
+    }
+]
