@@ -10,6 +10,19 @@
 						elapsed_time: number;
 						sport_type: string;
 						start_date: string;
+						heartRateStats?: {
+							min: number;
+							max: number;
+							avg: number;
+							p25: number;
+							p50: number;
+							p75: number;
+							sampleCount: number;
+							bins: {
+								label: string;
+								percentage: number;
+							}[];
+						} | null;
 				  }[]
 				| null;
 			needsAuth: boolean;
@@ -85,6 +98,46 @@
 							<span>{formatDuration(activity.elapsed_time)}</span>
 						</div>
 					</div>
+
+					{#if activity.heartRateStats}
+						<section class="hr">
+							<div class="hr-summary">
+								<div>
+									<span class="label">Avg HR</span>
+									<span>{Math.round(activity.heartRateStats.avg)} bpm</span>
+								</div>
+								<div>
+									<span class="label">Range</span>
+									<span
+										>{Math.round(activity.heartRateStats.min)}–{Math.round(
+											activity.heartRateStats.max
+										)} bpm</span
+									>
+								</div>
+								<div>
+									<span class="label">Median</span>
+									<span>{Math.round(activity.heartRateStats.p50)} bpm</span>
+								</div>
+							</div>
+
+							<div class="hr-distribution" aria-label="Heart rate distribution">
+								{#each activity.heartRateStats.bins as bin}
+									<div class="hr-row">
+										<div class="hr-bar">
+											<div
+												class="hr-bar-fill"
+												style={`width: ${bin.percentage.toFixed(1)}%;`}
+											></div>
+										</div>
+										<div class="hr-row-meta">
+											<span class="hr-bin-label">{bin.label}</span>
+											<span class="hr-bin-value">{bin.percentage.toFixed(0)}%</span>
+										</div>
+									</div>
+								{/each}
+							</div>
+						</section>
+					{/if}
 				</article>
 			{/each}
 		</section>
@@ -216,5 +269,74 @@
 		display: block;
 		font-size: 0.75rem;
 		color: #9ca3af;
+	}
+
+	.hr {
+		margin-top: 0.75rem;
+		padding-top: 0.6rem;
+		border-top: 1px solid rgba(148, 163, 184, 0.25);
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
+
+	.hr-summary {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		justify-content: space-between;
+		font-size: 0.85rem;
+	}
+
+	.hr-summary > div {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+	}
+
+	.hr-distribution {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.hr-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.hr-bar {
+		position: relative;
+		height: 0.4rem;
+		border-radius: 999px;
+		background: rgba(15, 23, 42, 0.9);
+		overflow: hidden;
+	}
+
+	.hr-bar-fill {
+		height: 100%;
+		border-radius: inherit;
+		background: linear-gradient(90deg, #22c55e, #f97316, #ef4444);
+	}
+
+	.hr-row-meta {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 0.05rem;
+		font-size: 0.7rem;
+		color: #9ca3af;
+		min-width: 70px;
+	}
+
+	.hr-bin-label {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.hr-bin-value {
+		font-variant-numeric: tabular-nums;
+		color: #e5e7eb;
 	}
 </style>

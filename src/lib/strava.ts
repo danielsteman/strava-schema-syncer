@@ -10,10 +10,34 @@ export type StravaActivity = {
 	elapsed_time: number;
 	sport_type: string;
 	start_date: string;
+	// Optional heart rate summary fields that Strava includes when available.
+	has_heartrate?: boolean;
+	average_heartrate?: number;
+	max_heartrate?: number;
+};
+
+export type HeartRateBin = {
+	label: string;
+	percentage: number;
+};
+
+export type HeartRateStats = {
+	min: number;
+	max: number;
+	avg: number;
+	p25: number;
+	p50: number;
+	p75: number;
+	sampleCount: number;
+	bins: HeartRateBin[];
+};
+
+export type EnrichedActivity = StravaActivity & {
+	heartRateStats?: HeartRateStats | null;
 };
 
 export type ActivitiesResult = {
-	activities: StravaActivity[] | null;
+	activities: EnrichedActivity[] | null;
 	needsAuth: boolean;
 	errorMessage?: string;
 };
@@ -72,7 +96,10 @@ async function refreshAccessToken(): Promise<string> {
 	currentRefreshToken = json.refresh_token;
 	accessTokenExpiresAt = json.expires_at;
 
-	console.info('[strava] New refresh token received (in-memory). Update .env if you restart:', json.refresh_token);
+	console.info(
+		'[strava] New refresh token received (in-memory). Update .env if you restart:',
+		json.refresh_token
+	);
 
 	return currentAccessToken;
 }
@@ -91,6 +118,106 @@ async function getAccessToken(): Promise<string> {
 	}
 
 	throw new Error('Missing Strava client credentials or tokens');
+}
+
+async function fetchHeartRateStatsForActivity(
+	activity: StravaActivity,
+	accessToken: string
+): Promise<HeartRateStats | null> {
+	// Only attempt when Strava says the activity has heart rate data.
+	if (!activity.has_heartrate) return null;
+
+	const res = await fetch(
+		`https://www.strava.com/api/v3/activities/${activity.id}/streams?keys=heartrate&key_by_type=true`,
+		{
+			headers: {
+				Authorization: `Bearer ${accessToken}`
+			}
+		}
+	);
+
+	if (!res.ok) {
+		// Silently ignore per-activity failures – we still want to show the activity itself.
+		return null;
+	}
+
+	const json = (await res.json()) as
+		| {
+				heartrate?: {
+					data?: number[];
+				};
+		  }
+		| {
+				data?: number[];
+		  }[]
+		| null;
+
+	let samples: number[] | undefined;
+
+	// Handle both key_by_type=true (object) and array formats defensively.
+	if (json && !Array.isArray(json) && 'heartrate' in json && json.heartrate?.data) {
+		samples = json.heartrate.data;
+	} else if (Array.isArray(json)) {
+		const hrStream = json.find((s: any) => s.type === 'heartrate' && Array.isArray(s.data));
+		samples = hrStream?.data;
+	}
+
+	if (!samples || samples.length === 0) {
+		return null;
+	}
+
+	const sorted = [...samples].sort((a, b) => a - b);
+	const n = sorted.length;
+
+	const percentile = (p: number) => {
+		if (n === 0) return NaN;
+		const idx = (p / 100) * (n - 1);
+		const lower = Math.floor(idx);
+		const upper = Math.ceil(idx);
+		if (lower === upper) return sorted[lower];
+		const weight = idx - lower;
+		return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+	};
+
+	const min = sorted[0];
+	const max = sorted[n - 1];
+	const avg = samples.reduce((acc, v) => acc + v, 0) / n;
+	const p25 = percentile(25);
+	const p50 = percentile(50);
+	const p75 = percentile(75);
+
+	// Build a simple histogram with 5 bins across [min, max].
+	const binCount = 5;
+	const range = max - min || 1;
+	const binSize = range / binCount;
+	const counts = new Array<number>(binCount).fill(0);
+
+	for (const hr of samples) {
+		let idx = Math.floor((hr - min) / binSize);
+		if (idx < 0) idx = 0;
+		if (idx >= binCount) idx = binCount - 1;
+		counts[idx]++;
+	}
+
+	const bins: HeartRateBin[] = counts.map((count, i) => {
+		const from = Math.round(min + i * binSize);
+		const to = Math.round(i === binCount - 1 ? max : min + (i + 1) * binSize);
+		return {
+			label: `${from}–${to} bpm`,
+			percentage: n > 0 ? (count / n) * 100 : 0
+		};
+	});
+
+	return {
+		min,
+		max,
+		avg,
+		p25,
+		p50,
+		p75,
+		sampleCount: n,
+		bins
+	};
 }
 
 export async function getRecentActivities(limit = 20): Promise<ActivitiesResult> {
@@ -126,8 +253,20 @@ export async function getRecentActivities(limit = 20): Promise<ActivitiesResult>
 
 		const data = (await res.json()) as StravaActivity[];
 
+		// Enrich activities with heart rate distributions when available.
+		const activitiesWithHr: EnrichedActivity[] = await Promise.all(
+			data.map(async (activity) => {
+				try {
+					const heartRateStats = await fetchHeartRateStatsForActivity(activity, accessToken);
+					return { ...activity, heartRateStats };
+				} catch {
+					return { ...activity, heartRateStats: null };
+				}
+			})
+		);
+
 		return {
-			activities: data,
+			activities: activitiesWithHr,
 			needsAuth: false
 		};
 	} catch (err) {
@@ -149,5 +288,3 @@ export async function getRecentActivities(limit = 20): Promise<ActivitiesResult>
 		};
 	}
 }
-
-
