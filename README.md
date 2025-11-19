@@ -1,38 +1,47 @@
-# sv
+## strava-schema-syncer
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Single-user SvelteKit app that authenticates with Strava via OAuth and displays your recent activities.
 
-## Creating a project
+### Developing
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `deno install`, start a development server:
+Use Deno tasks to run the app (no npm CLI required). Start the dev server:
 
 ```sh
 deno task dev
-
-# or start the server and open the app in a new browser tab
-deno task dev -- --open
 ```
 
-## Building
+### Building
 
-To create a production version of your app:
+To create a production build:
 
 ```sh
 deno task build
 ```
 
-You can preview the production build with `deno task preview`.
+You can preview the production build with:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```sh
+deno task preview
+```
+
+> To deploy your app, you may need to install an adapter for your target environment.
+
+### Semantic commit messages
+
+This project uses **Conventional Commits** enforced via [`commitlint`](https://github.com/conventional-changelog/commitlint).
+
+To enforce this locally without npm, add a Git commit-msg hook:
+
+```sh
+cat > .git/hooks/commit-msg << 'EOF'
+#!/usr/bin/env sh
+deno run -A npm:@commitlint/cli -- --edit "$1"
+EOF
+chmod +x .git/hooks/commit-msg
+```
+
+From then on, commits must follow semantic prefixes such as:
+
+- `feat: add strava login flow`
+- `fix: handle expired refresh token`
+- `chore: update dependencies`
