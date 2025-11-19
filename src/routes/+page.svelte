@@ -158,6 +158,8 @@
 			'Segoe UI',
 			sans-serif;
 		color: #e5e7eb;
+		position: relative;
+		z-index: 1;
 	}
 
 	.header {
@@ -184,29 +186,47 @@
 		justify-content: center;
 		padding: 0.6rem 1rem;
 		border-radius: 999px;
-		background: #f97316;
+		background: radial-gradient(circle at 0% 0%, #fed7aa, #f97316);
 		color: #0b1120;
 		text-decoration: none;
 		font-weight: 600;
 		font-size: 0.95rem;
-		box-shadow: 0 10px 25px rgba(248, 113, 22, 0.35);
+		box-shadow:
+			0 14px 40px rgba(248, 113, 22, 0.45),
+			0 0 0 1px rgba(15, 23, 42, 0.6);
 		white-space: nowrap;
+		transition:
+			transform 140ms ease-out,
+			box-shadow 140ms ease-out,
+			background 140ms ease-out;
 	}
 
 	.button:hover {
-		background: #fb923c;
+		background: radial-gradient(circle at 0% 0%, #fed7aa, #fb923c);
+		transform: translateY(-1px);
+		box-shadow:
+			0 18px 50px rgba(248, 113, 22, 0.55),
+			0 0 0 1px rgba(15, 23, 42, 0.7);
 	}
 
 	.message {
 		margin-bottom: 1.5rem;
 		padding: 0.75rem 1rem;
 		border-radius: 0.5rem;
-		background: #020617;
+		background:
+			linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.82)),
+			radial-gradient(circle at top left, rgba(248, 113, 22, 0.18), transparent 55%);
 		color: #e5e7eb;
+		border: 1px solid rgba(148, 163, 184, 0.6);
+		box-shadow:
+			0 18px 45px rgba(15, 23, 42, 0.95),
+			0 0 0 1px rgba(15, 23, 42, 0.7);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
 	}
 
 	.message-error {
-		border: 1px solid #f97316;
+		border: 1px solid rgba(248, 113, 22, 0.85);
 	}
 
 	.message a {
@@ -220,13 +240,33 @@
 	}
 
 	.activity-card {
-		background: #020617;
+		background:
+			linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.82)),
+			radial-gradient(circle at top right, rgba(56, 189, 248, 0.22), transparent 55%);
 		border-radius: 0.75rem;
 		padding: 1rem 1.1rem;
-		border: 1px solid rgba(148, 163, 184, 0.2);
+		border: 1px solid rgba(148, 163, 184, 0.55);
 		display: flex;
 		flex-direction: column;
 		gap: 0.35rem;
+		box-shadow:
+			0 22px 55px rgba(15, 23, 42, 0.98),
+			0 0 0 1px rgba(15, 23, 42, 0.85);
+		backdrop-filter: blur(26px);
+		-webkit-backdrop-filter: blur(26px);
+		transition:
+			transform 140ms ease-out,
+			box-shadow 140ms ease-out,
+			border-color 140ms ease-out,
+			background 140ms ease-out;
+	}
+
+	.activity-card:hover {
+		transform: translateY(-1px);
+		border-color: rgba(248, 113, 22, 0.8);
+		box-shadow:
+			0 28px 70px rgba(15, 23, 42, 0.98),
+			0 0 0 1px rgba(15, 23, 42, 0.9);
 	}
 
 	.activity-card header {
@@ -274,7 +314,7 @@
 	.hr {
 		margin-top: 0.75rem;
 		padding-top: 0.6rem;
-		border-top: 1px solid rgba(148, 163, 184, 0.25);
+		border-top: 1px solid rgba(148, 163, 184, 0.35);
 		display: flex;
 		flex-direction: column;
 		gap: 0.6rem;
@@ -311,7 +351,7 @@
 		position: relative;
 		height: 0.4rem;
 		border-radius: 999px;
-		background: rgba(15, 23, 42, 0.9);
+		background: rgba(15, 23, 42, 0.95);
 		overflow: hidden;
 	}
 

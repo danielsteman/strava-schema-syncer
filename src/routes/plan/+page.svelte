@@ -146,6 +146,8 @@
 			'Segoe UI',
 			sans-serif;
 		color: #e5e7eb;
+		position: relative;
+		z-index: 1;
 	}
 
 	.header {
@@ -167,33 +169,57 @@
 	}
 
 	.toggle {
-		padding: 0.5rem 0.9rem;
+		padding: 0.5rem 0.95rem;
 		border-radius: 999px;
 		border: 1px solid rgba(148, 163, 184, 0.6);
-		background: rgba(15, 23, 42, 0.9);
+		background:
+			linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.82)),
+			radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%);
 		color: #e5e7eb;
 		font-size: 0.85rem;
 		cursor: pointer;
+		box-shadow:
+			0 14px 36px rgba(15, 23, 42, 0.95),
+			0 0 0 1px rgba(15, 23, 42, 0.8);
+		backdrop-filter: blur(18px);
+		-webkit-backdrop-filter: blur(18px);
+		transition:
+			transform 140ms ease-out,
+			box-shadow 140ms ease-out,
+			border-color 140ms ease-out,
+			background 140ms ease-out;
 	}
 
 	.toggle:hover {
-		border-color: #f97316;
+		border-color: rgba(248, 113, 22, 0.9);
+		transform: translateY(-1px);
+		box-shadow:
+			0 18px 46px rgba(15, 23, 42, 0.98),
+			0 0 0 1px rgba(15, 23, 42, 0.85);
 	}
 
 	.message {
 		margin-bottom: 1.2rem;
 		padding: 0.75rem 1rem;
 		border-radius: 0.5rem;
-		background: #020617;
+		background:
+			linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.82)),
+			radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 55%);
 		color: #e5e7eb;
+		border: 1px solid rgba(148, 163, 184, 0.6);
+		box-shadow:
+			0 16px 40px rgba(15, 23, 42, 0.96),
+			0 0 0 1px rgba(15, 23, 42, 0.8);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
 	}
 
 	.message-error {
-		border: 1px solid #f97316;
+		border-color: rgba(248, 113, 22, 0.85);
 	}
 
 	.message.info {
-		border: 1px solid rgba(56, 189, 248, 0.4);
+		border-color: rgba(56, 189, 248, 0.6);
 	}
 
 	.weeks {
@@ -203,13 +229,33 @@
 	}
 
 	.week-card {
-		background: #020617;
+		background:
+			linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.82)),
+			radial-gradient(circle at top right, rgba(56, 189, 248, 0.22), transparent 60%);
 		border-radius: 0.75rem;
 		padding: 1rem 1.1rem;
-		border: 1px solid rgba(148, 163, 184, 0.25);
+		border: 1px solid rgba(148, 163, 184, 0.55);
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
+		box-shadow:
+			0 22px 55px rgba(15, 23, 42, 0.98),
+			0 0 0 1px rgba(15, 23, 42, 0.85);
+		backdrop-filter: blur(26px);
+		-webkit-backdrop-filter: blur(26px);
+		transition:
+			transform 140ms ease-out,
+			box-shadow 140ms ease-out,
+			border-color 140ms ease-out,
+			background 140ms ease-out;
+	}
+
+	.week-card:hover {
+		transform: translateY(-1px);
+		border-color: rgba(248, 113, 22, 0.8);
+		box-shadow:
+			0 28px 70px rgba(15, 23, 42, 0.98),
+			0 0 0 1px rgba(15, 23, 42, 0.9);
 	}
 
 	.week-card header {
@@ -256,7 +302,7 @@
 		width: 100%;
 		height: 0.45rem;
 		border-radius: 999px;
-		background: rgba(15, 23, 42, 0.9);
+		background: rgba(15, 23, 42, 0.96);
 		overflow: hidden;
 	}
 

@@ -5,10 +5,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "MyWeb": {
-      "type": "sst.aws.SvelteKit"
-      "url": string
-    }
     "StravaSchemaSyncer": {
       "type": "sst.aws.SvelteKit"
       "url": string
