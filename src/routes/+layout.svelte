@@ -11,8 +11,8 @@
 
 <div class="app-shell">
 	<div class="bg-shapes" aria-hidden="true">
-		<div class="bg-shape bg-shape--cyan"></div>
-		<div class="bg-shape bg-shape--amber"></div>
+		<div class="bg-shape bg-shape--left"></div>
+		<div class="bg-shape bg-shape--right"></div>
 	</div>
 
 	<header class="site-nav">
@@ -32,8 +32,7 @@
 	:global(body) {
 		margin: 0;
 		min-height: 100vh;
-		background:
-			radial-gradient(circle at 50% -10%, #020617 0, #020617 40%, #000 100%);
+		background: #020617;
 		color: #e5e7eb;
 		font-family:
 			system-ui,
@@ -45,120 +44,66 @@
 		overflow-x: hidden;
 	}
 
-	:global(body)::after {
-		/* subtle animated grain texture */
-		content: '';
+	/* subtle blurry, grainy background shapes */
+
+	.bg-shapes {
 		position: fixed;
-		inset: 0;
+		inset: -10%;
 		pointer-events: none;
 		z-index: -1;
-		opacity: 0.14;
-		mix-blend-mode: soft-light;
-		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
-		animation: grain-shift 18s steps(6, end) infinite;
+		overflow: hidden;
 	}
 
-	@keyframes grain-shift {
-		0% {
-			transform: translate3d(0, 0, 0);
+	.bg-shape {
+		position: absolute;
+		width: min(420px, 72vw);
+		aspect-ratio: 4 / 3;
+		border-radius: 999px;
+		filter: blur(40px);
+		opacity: 0.35;
+		mix-blend-mode: screen;
+		background-blend-mode: screen;
+	}
+
+	.bg-shape--left {
+		top: -10%;
+		left: -8%;
+		background:
+			radial-gradient(circle at 10% 0%, rgba(148, 163, 184, 0.22), transparent 55%),
+			radial-gradient(circle at 0% 100%, rgba(56, 189, 248, 0.7), transparent 65%),
+			url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+	}
+
+	.bg-shape--right {
+		bottom: -16%;
+		right: -12%;
+		background:
+			radial-gradient(circle at 90% 0%, rgba(248, 250, 252, 0.18), transparent 55%),
+			radial-gradient(circle at 100% 100%, rgba(248, 113, 22, 0.75), transparent 70%),
+			url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+	}
+
+	@media (max-width: 640px) {
+		.bg-shape {
+			width: 120%;
+			filter: blur(44px);
+			opacity: 0.32;
 		}
-		25% {
-			transform: translate3d(-10px, -8px, 0);
+
+		.bg-shape--left {
+			top: -16%;
+			left: -25%;
 		}
-		50% {
-			transform: translate3d(6px, -6px, 0);
-		}
-		75% {
-			transform: translate3d(-4px, 6px, 0);
-		}
-		100% {
-			transform: translate3d(0, 0, 0);
+
+		.bg-shape--right {
+			bottom: -24%;
+			right: -30%;
 		}
 	}
 
 	.app-shell {
 		position: relative;
 		min-height: 100vh;
-	}
-
-	.bg-shapes {
-		position: fixed;
-		inset: -4%;
-		pointer-events: none;
-		z-index: -2;
-		overflow: hidden;
-	}
-
-	.bg-shape {
-		position: absolute;
-		width: min(520px, 80vw);
-		aspect-ratio: 4 / 3;
-		border-radius: 999px;
-		filter: blur(32px);
-		opacity: 0.9;
-		mix-blend-mode: screen;
-		transform-origin: center;
-	}
-
-	.bg-shape--cyan {
-		top: -4%;
-		left: -2%;
-		background:
-			radial-gradient(circle at 10% 0%, rgba(244, 244, 245, 0.22), transparent 52%),
-			radial-gradient(circle at 0% 100%, rgba(56, 189, 248, 0.9), transparent 65%),
-			radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.8), transparent 70%);
-		animation: float-blob-1 26s ease-in-out infinite alternate;
-	}
-
-	.bg-shape--amber {
-		top: -2%;
-		right: -6%;
-		background:
-			radial-gradient(circle at 0% 0%, rgba(254, 249, 195, 0.3), transparent 45%),
-			radial-gradient(circle at 10% 90%, rgba(248, 113, 22, 0.9), transparent 70%),
-			radial-gradient(circle at 90% 10%, rgba(234, 179, 8, 0.85), transparent 70%);
-		animation: float-blob-2 30s ease-in-out infinite alternate;
-	}
-
-	@keyframes float-blob-1 {
-		0% {
-			transform: translate3d(0, 0, 0) scale(1);
-		}
-		50% {
-			transform: translate3d(18px, 12px, 0) scale(1.05);
-		}
-		100% {
-			transform: translate3d(8px, 22px, 0) scale(1.03);
-		}
-	}
-
-	@keyframes float-blob-2 {
-		0% {
-			transform: translate3d(0, 0, 0) scale(1);
-		}
-		50% {
-			transform: translate3d(-24px, 6px, 0) scale(1.08) rotate(-2deg);
-		}
-		100% {
-			transform: translate3d(-10px, 18px, 0) scale(1.04) rotate(1deg);
-		}
-	}
-
-	@media (max-width: 640px) {
-		.bg-shape {
-			width: 120%;
-			filter: blur(36px);
-		}
-
-		.bg-shape--cyan {
-			top: -8%;
-			left: -18%;
-		}
-
-		.bg-shape--amber {
-			top: 28%;
-			right: -24%;
-		}
 	}
 
 	.site-nav {

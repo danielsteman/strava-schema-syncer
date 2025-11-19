@@ -5,6 +5,18 @@
 
 declare module "sst" {
   export interface Resource {
+    "STRAVA_CLIENT_ID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "STRAVA_CLIENT_SECRET": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "STRAVA_REFRESH_TOKEN": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "StravaSchemaSyncer": {
       "type": "sst.aws.SvelteKit"
       "url": string
