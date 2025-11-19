@@ -30,6 +30,14 @@
 		};
 	}>();
 
+	const isRun = (activity: { sport_type: string }) =>
+		activity.sport_type?.toLowerCase().includes('run');
+
+	const runActivities =
+		data.activities && Array.isArray(data.activities)
+			? data.activities.filter(isRun)
+			: data.activities;
+
 	const formatDistance = (meters: number) => {
 		const km = meters / 1000;
 		return `${km.toFixed(1)} km`;
@@ -75,9 +83,9 @@
 			<a href="/auth/strava">Connect / Re-authorize Strava</a>
 			to continue.
 		</p>
-	{:else if data.activities && data.activities.length > 0}
+	{:else if runActivities && runActivities.length > 0}
 		<section class="activities">
-			{#each data.activities as activity}
+			{#each runActivities as activity}
 				<article class="activity-card">
 					<header>
 						<h2>{activity.name}</h2>
@@ -142,7 +150,9 @@
 			{/each}
 		</section>
 	{:else}
-		<p class="message">No activities found yet. Try a different day or re-authorize Strava.</p>
+		<p class="message">
+			No running activities found yet. Try a different day or re-authorize Strava.
+		</p>
 	{/if}
 </main>
 
