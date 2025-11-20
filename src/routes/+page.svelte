@@ -152,6 +152,8 @@
 								{/each}
 							</div>
 						</section>
+					{:else}
+						<p class="no-hr-data">No heart rate data available for this run.</p>
 					{/if}
 				</article>
 			{/each}
@@ -373,6 +375,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.6rem;
+	}
+
+	.no-hr-data {
+		margin-top: 0.75rem;
+		font-size: 0.8rem;
+		color: #9ca3af;
+		font-style: italic;
 	}
 
 	.hr-summary {

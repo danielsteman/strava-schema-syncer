@@ -32,13 +32,9 @@
 		</div>
 
 		<div class="header-actions">
-			<a class="toggle connect" href="/auth/strava">
-				{#if data.needsAuth}
-					Connect Strava
-				{:else}
-					Reconnect / Switch account
-				{/if}
-			</a>
+			{#if data.needsAuth}
+				<a class="toggle connect" href="/auth/strava">Connect Strava</a>
+			{/if}
 
 			<button
 				type="button"

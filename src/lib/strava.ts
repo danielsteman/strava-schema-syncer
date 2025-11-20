@@ -33,6 +33,14 @@ export type HeartRateStats = {
 	bins: HeartRateBin[];
 };
 
+const STANDARD_HEART_RATE_BINS: { label: string; min: number; max: number }[] = [
+	{ label: '<120 bpm', min: 0, max: 119 },
+	{ label: '120–139 bpm', min: 120, max: 139 },
+	{ label: '140–159 bpm', min: 140, max: 159 },
+	{ label: '160–179 bpm', min: 160, max: 179 },
+	{ label: '≥180 bpm', min: 180, max: Number.POSITIVE_INFINITY }
+];
+
 export type EnrichedActivity = StravaActivity & {
 	heartRateStats?: HeartRateStats | null;
 };
@@ -196,27 +204,25 @@ async function fetchHeartRateStatsForActivity(
 	const p50 = percentile(50);
 	const p75 = percentile(75);
 
-	// Build a simple histogram with 5 bins across [min, max].
-	const binCount = 5;
-	const range = max - min || 1;
-	const binSize = range / binCount;
-	const counts = new Array<number>(binCount).fill(0);
+	// Build a histogram using standard, fixed heart rate brackets so charts are comparable across runs.
+	const counts = new Array<number>(STANDARD_HEART_RATE_BINS.length).fill(0);
 
 	for (const hr of samples) {
-		let idx = Math.floor((hr - min) / binSize);
-		if (idx < 0) idx = 0;
-		if (idx >= binCount) idx = binCount - 1;
-		counts[idx]++;
+		const idx = STANDARD_HEART_RATE_BINS.findIndex(
+			(bin, i) =>
+				hr >= bin.min &&
+				(hr < bin.max || (i === STANDARD_HEART_RATE_BINS.length - 1 && hr <= bin.max))
+		);
+
+		if (idx !== -1) {
+			counts[idx]++;
+		}
 	}
 
-	const bins: HeartRateBin[] = counts.map((count, i) => {
-		const from = Math.round(min + i * binSize);
-		const to = Math.round(i === binCount - 1 ? max : min + (i + 1) * binSize);
-		return {
-			label: `${from}–${to} bpm`,
-			percentage: n > 0 ? (count / n) * 100 : 0
-		};
-	});
+	const bins: HeartRateBin[] = counts.map((count, i) => ({
+		label: STANDARD_HEART_RATE_BINS[i].label,
+		percentage: n > 0 ? (count / n) * 100 : 0
+	}));
 
 	return {
 		min,
