@@ -1,4 +1,4 @@
-import { STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_REFRESH_TOKEN } from '$env/static/private';
+import { STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET } from '$env/static/private';
 import { getTokensForAthlete, putTokensForAthlete } from './strava-tokens.ts';
 
 // Minimal shape for the activities we care about from Strava's /athlete/activities endpoint.
@@ -96,9 +96,9 @@ async function refreshAccessTokenForAthlete(athleteId: string): Promise<string> 
 		accessToken: json.access_token,
 		refreshToken: json.refresh_token,
 		expiresAt: json.expires_at,
-		athleteFirstName: existing.athleteFirstName,
-		scope: json.scope ?? existing.scope,
-		createdAt: existing.createdAt ?? nowIso,
+		athleteFirstName: existing?.athleteFirstName,
+		scope: json.scope ?? existing?.scope ?? 'activity:read_all',
+		createdAt: existing?.createdAt ?? nowIso,
 		updatedAt: nowIso
 	});
 
@@ -126,53 +126,6 @@ async function getAccessToken(athleteId?: string): Promise<string> {
 
 	// No athlete selected in this browser – treat as \"not connected\".
 	throw new Error('No stored Strava tokens for the current athlete');
-
-	// Legacy single-user behaviour (disabled now that we support multi-user):
-	// use the refresh token from .env and keep tokens in memory for the
-	// lifetime of the process. If you want to re-enable this, move the early
-	// throw above behind an explicit feature flag.
-	// tokens in memory for the lifetime of the process.
-	let currentAccessToken: string | null = null;
-	let currentRefreshToken: string | null = STRAVA_REFRESH_TOKEN ?? null;
-	let accessTokenExpiresAt: number | null = null;
-
-	const now = Math.floor(Date.now() / 1000);
-
-	if (currentAccessToken && accessTokenExpiresAt && accessTokenExpiresAt - 60 > now) {
-		return currentAccessToken;
-	}
-
-	if (!STRAVA_CLIENT_ID || !STRAVA_CLIENT_SECRET || !currentRefreshToken) {
-		throw new Error('Missing Strava client credentials or tokens');
-	}
-
-	const body = new URLSearchParams({
-		client_id: STRAVA_CLIENT_ID,
-		client_secret: STRAVA_CLIENT_SECRET,
-		grant_type: 'refresh_token',
-		refresh_token: currentRefreshToken
-	});
-
-	const res = await fetch('https://www.strava.com/oauth/token', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded'
-		},
-		body
-	});
-
-	if (!res.ok) {
-		const text = await res.text();
-		throw new Error(`Failed to refresh Strava access token: ${text}`);
-	}
-
-	const json = (await res.json()) as StravaRefreshResponse;
-
-	currentAccessToken = json.access_token;
-	currentRefreshToken = json.refresh_token;
-	accessTokenExpiresAt = json.expires_at;
-
-	return currentAccessToken;
 }
 
 async function fetchHeartRateStatsForActivity(
@@ -344,9 +297,7 @@ export async function getRecentActivities(
 		if (message.toLowerCase().includes('no stored strava tokens')) {
 			return {
 				activities: null,
-				needsAuth: true,
-				errorMessage:
-					'No Strava tokens found for the current athlete. Click Connect Strava to authorize access.'
+				needsAuth: true
 			};
 		}
 

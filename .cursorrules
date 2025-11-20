@@ -100,6 +100,7 @@
   - Use `deno task lint` / `npm run lint` and `deno task format` / `npm run format` before committing.
   - Obey ESLint + TypeScript + Svelte rules configured in `eslint.config.js`, including the recommendation to avoid `no-undef` on TS.
   - Prettier (with Svelte and Tailwind plugins) defines formatting; do not hand-align or fight the formatter.
+  - The Cursor assistant should respect the existing linting configuration and **check and address linter errors or warnings** (via `deno task lint` / `npm run lint` or `read_lints`) after making substantive code changes, fixing any new issues it introduces where practical.
 
 ## Infrastructure & deployment
 

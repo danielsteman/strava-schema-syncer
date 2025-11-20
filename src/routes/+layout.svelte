@@ -19,8 +19,23 @@
 		userMenuOpen = !userMenuOpen;
 	};
 
-	const closeUserMenu = () => {
-		userMenuOpen = false;
+	const logout = () => {
+		// Force a full navigation so the /auth/logout endpoint runs and clears cookies.
+		window.location.href = '/auth/logout';
+	};
+
+	const handleUserMenuFocusOut = (event: FocusEvent) => {
+		const next = event.relatedTarget as HTMLElement | null;
+		const container = event.currentTarget as HTMLElement | null;
+
+		if (!container) {
+			userMenuOpen = false;
+			return;
+		}
+
+		if (!next || !container.contains(next)) {
+			userMenuOpen = false;
+		}
 	};
 </script>
 
@@ -35,31 +50,33 @@
 	</div>
 
 	<header class="site-nav">
-		<a href="/" class="brand">Strava schema syncer</a>
+		<a href="/" class="brand">Strava Schema Syncer</a>
 		<div class="nav-right">
 			<nav class="links">
 				<a href="/">Home</a>
 				<a href="/plan">Plan</a>
 			</nav>
 
-			<div class="user-menu" onfocusout={closeUserMenu}>
-				<button
-					type="button"
-					class="avatar-button"
-					aria-label="Account"
-					aria-haspopup="menu"
-					aria-expanded={userMenuOpen}
-					onclick={toggleUserMenu}
-				>
-					<span class="avatar-initials">{data.user?.initial ?? 'S'}</span>
-				</button>
+			{#if data.user}
+				<div class="user-menu" onfocusout={handleUserMenuFocusOut}>
+					<button
+						type="button"
+						class="avatar-button"
+						aria-label="Account"
+						aria-haspopup="menu"
+						aria-expanded={userMenuOpen}
+						onclick={toggleUserMenu}
+					>
+						<span class="avatar-initials">{data.user.initial}</span>
+					</button>
 
-				{#if userMenuOpen}
-					<div class="user-menu-dropdown" role="menu">
-						<a href="/auth/logout" role="menuitem">Logout</a>
-					</div>
-				{/if}
-			</div>
+					{#if userMenuOpen}
+						<div class="user-menu-dropdown" role="menu">
+							<button type="button" role="menuitem" onclick={logout}>Logout</button>
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</div>
 	</header>
 
@@ -274,16 +291,22 @@
 		z-index: 30;
 	}
 
-	.user-menu-dropdown a {
+	.user-menu-dropdown button {
 		display: block;
+		width: 100%;
 		padding: 0.4rem 0.7rem;
 		font-size: 0.8rem;
 		color: #e5e7eb;
+		text-align: left;
 		text-decoration: none;
 		border-radius: 0.4rem;
+		border: none;
+		background: transparent;
+		cursor: pointer;
 	}
 
-	.user-menu-dropdown a:hover {
+	.user-menu-dropdown button:hover,
+	.user-menu-dropdown button:focus-visible {
 		background: rgba(15, 23, 42, 0.96);
 		color: #f97316;
 	}

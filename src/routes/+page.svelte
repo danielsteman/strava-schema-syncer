@@ -83,7 +83,6 @@
 					tokens refreshed for you.
 				</p>
 			</div>
-			<a class="button" href="/auth/strava">Reconnect / Switch Strava account</a>
 		</section>
 	{/if}
 
