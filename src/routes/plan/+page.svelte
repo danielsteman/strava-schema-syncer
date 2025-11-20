@@ -31,18 +31,28 @@
 			</p>
 		</div>
 
-		<button
-			type="button"
-			class="toggle"
-			onclick={() => (showExample = !showExample)}
-			aria-pressed={showExample}
-		>
-			{#if showExample}
-				View live Strava data
-			{:else}
-				View example data
-			{/if}
-		</button>
+		<div class="header-actions">
+			<a class="toggle connect" href="/auth/strava">
+				{#if data.needsAuth}
+					Connect Strava
+				{:else}
+					Reconnect / Switch account
+				{/if}
+			</a>
+
+			<button
+				type="button"
+				class="toggle"
+				onclick={() => (showExample = !showExample)}
+				aria-pressed={showExample}
+			>
+				{#if showExample}
+					View live Strava data
+				{:else}
+					View example data
+				{/if}
+			</button>
+		</div>
 	</header>
 
 	{#if data.errorMessage}
@@ -158,6 +168,13 @@
 		margin-bottom: 1.75rem;
 	}
 
+	.header-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 0.5rem;
+	}
+
 	h1 {
 		margin: 0 0 0.4rem;
 		font-size: clamp(2rem, 3vw, 2.4rem);
@@ -196,6 +213,13 @@
 		box-shadow:
 			0 18px 46px rgba(15, 23, 42, 0.98),
 			0 0 0 1px rgba(15, 23, 42, 0.85);
+	}
+
+	.connect {
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.message {
@@ -366,6 +390,10 @@
 	@media (max-width: 640px) {
 		.header {
 			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.header-actions {
 			align-items: stretch;
 		}
 

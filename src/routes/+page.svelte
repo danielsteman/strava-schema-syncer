@@ -66,11 +66,18 @@
 	<section class="header">
 		<div>
 			<h1>My Strava activities</h1>
-			<p>Single-user view of recent activities fetched from the Strava API.</p>
+			<p>
+				Recent activities fetched from the Strava API. Connect your account once and we will keep
+				tokens refreshed for you.
+			</p>
 		</div>
-		{#if data.needsAuth}
-			<a class="button" href="/auth/strava">Connect / Re-authorize Strava</a>
-		{/if}
+		<a class="button" href="/auth/strava">
+			{#if data.needsAuth}
+				Connect Strava
+			{:else}
+				Reconnect / Switch Strava account
+			{/if}
+		</a>
 	</section>
 
 	{#if data.errorMessage}
@@ -80,7 +87,7 @@
 	{#if data.needsAuth}
 		<p class="message">
 			Strava authorization is required or has expired. Click
-			<a href="/auth/strava">Connect / Re-authorize Strava</a>
+			<a href="/auth/strava">Connect Strava</a>
 			to continue.
 		</p>
 	{:else if runActivities && runActivities.length > 0}

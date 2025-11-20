@@ -7,5 +7,12 @@
         "test": "deno run -A npm:vitest -- run",
         "format": "deno run -A npm:prettier --write .",
         "lint": "deno run -A npm:prettier --check . && deno run -A npm:eslint ."
+    },
+    "lint": {
+        "rules": {
+            "exclude": [
+                "no-sloppy-imports"
+            ]
+        }
     }
 }

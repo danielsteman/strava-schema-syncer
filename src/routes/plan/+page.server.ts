@@ -131,8 +131,9 @@ const mapWeeks = (weeks: MarathonWeek[], activities: EnrichedActivity[]): WeekWi
 	});
 };
 
-export const load: PageServerLoad = async () => {
-	const { activities, needsAuth, errorMessage } = await getRecentActivities(200);
+export const load: PageServerLoad = async ({ cookies }) => {
+	const athleteId = cookies.get('strava_athlete_id') ?? undefined;
+	const { activities, needsAuth, errorMessage } = await getRecentActivities(200, athleteId);
 
 	const liveActivities = activities ?? [];
 	const marathonWeeks = mapWeeks(marathonSchema, liveActivities);
@@ -177,5 +178,3 @@ export const load: PageServerLoad = async () => {
 		errorMessage
 	};
 };
-
-

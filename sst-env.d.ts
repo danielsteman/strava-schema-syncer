@@ -21,6 +21,10 @@ declare module "sst" {
       "type": "sst.aws.SvelteKit"
       "url": string
     }
+    "StravaTokensTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
   }
 }
 /// <reference path="sst-env.d.ts" />

@@ -46,6 +46,8 @@
     "vitest-browser-svelte": "^2.0.1"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.721.0",
+    "@aws-sdk/lib-dynamodb": "^3.721.0",
     "sst": "3.17.23",
     "svelte-kit-sst": "2.43.5"
   }
