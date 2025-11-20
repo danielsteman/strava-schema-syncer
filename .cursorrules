@@ -1,0 +1,137 @@
+## High-level goals
+
+- **App purpose**: Single-user (moving toward multi-user) SvelteKit app that connects to Strava via OAuth, fetches activities, and maps them onto a marathon training schema.
+- **Stack**: SvelteKit 2 + Svelte 5 runes (`$props`, `$state`), TypeScript (strict), Vite, Vitest (+ `vitest-browser-svelte`), Tailwind via `@tailwindcss/vite`, SST 3 on AWS with Cloudflare DNS, Strava API.
+- **Primary domains**:
+  - **Strava integration**: OAuth, token refresh, activities and heart-rate stats.
+  - **Training schema**: Static marathon plan JSON + mapping of Strava activities into week/session progress.
+  - **Deployment**: SST `SvelteKit` app, Strava secrets, and a DynamoDB table for future multi-user tokens.
+
+## Editing & navigation
+
+- **Routing and pages**
+  - Use SvelteKit file-based routing under `src/routes`.
+  - **Server-side data** for pages should live in `+page.server.ts` (e.g. `getRecentActivities` usage in `+page.server.ts` and `plan/+page.server.ts`) and **never** fetch Strava from the browser.
+  - New API-style endpoints should use `+server.ts` under `src/routes/**` and return proper HTTP responses.
+  - Maintain the pattern of keeping **UI-only logic** in `+page.svelte` and **side-effectful / data fetching logic** in the matching `+page.server.ts`.
+
+- **Shared code**
+  - Use `$lib` for shared TypeScript logic and types. Existing Strava logic (`src/lib/strava.ts`) is the canonical place for Strava API access and types; extend it instead of duplicating fetch logic in routes.
+  - For complex data transforms that may be reused or tested (e.g. mapping activities to schema weeks), prefer moving pure functions into `$lib` modules instead of keeping them inline in `+page.server.ts`.
+
+- **Styling and UI**
+  - The design language is dark, glassmorphism/gradient-heavy (see `+layout.svelte`, `+page.svelte`, `plan/+page.svelte`, and `UI.md`).
+  - For new components, match existing **visual style**:
+    - Dark slate background, soft gradients, glassy cards with subtle borders and shadows.
+    - Rounded cards, pill buttons, and subtle animations for interactions and loading.
+  - Prefer **component-scoped styles** within `.svelte` files over global CSS, except for truly global concerns (`src/routes/layout.css` and body-level styles in `+layout.svelte`).
+  - Use semantic HTML (headings, sections, lists) and ARIA attributes for dynamic pieces (e.g. loading overlays).
+
+## TypeScript & Svelte conventions
+
+- **TypeScript**
+  - Keep `tsconfig.json` strictness intact; new code should compile cleanly with `strict: true`.
+  - Prefer **explicit types** for domain objects and API responses (see `StravaActivity`, `EnrichedActivity`, `HeartRateStats`, `MarathonWeek`, `PlannedSession`, `WeekWithStats`).
+  - When consuming external APIs (Strava or others), model the minimal response shape as types and **narrow/validate** defensively before use.
+  - When adding new utility functions, keep them **pure** where possible and avoid hidden I/O (e.g. no implicit global mutations unless clearly documented like the in-memory token cache).
+
+- **Svelte runes**
+  - Use Svelte 5 runes (`$props`, `$state`) consistently in `.svelte` files:
+    - `$props<T>()` for typed props.
+    - `$state` for local component state (e.g. toggles and UI flags).
+  - Keep data-shaping/aggregation in the server load and pass ready-to-render data into components instead of doing heavy transformation in the template.
+
+## Strava & data access patterns
+
+- **Strava API**
+  - Centralize all Strava HTTP calls in `$lib/strava.ts` or submodules under `$lib/strava/**`.
+  - Reuse the existing patterns:
+    - `getAccessToken()` and `refreshAccessToken()` that manage access/refresh tokens.
+    - Error handling that distinguishes between **auth problems** (`needsAuth: true`) and generic failures with user-visible messages.
+    - Optional enrichment steps (e.g. heart-rate stats) that **fail soft** and still return the base activity.
+  - Any new Strava endpoints (segments, laps, athlete profile, etc.) should:
+    - Define typed response slices (minimal shape needed).
+    - Be wrapped in exported helper functions returning a **typed result object** that can encode `needsAuth`, `errorMessage`, and data.
+
+- **Token storage and multi-user direction**
+  - Current runtime uses an in-memory token cache seeded from `STRAVA_REFRESH_TOKEN` env var (`src/lib/strava.ts`).
+  - Infrastructure already declares a **DynamoDB `StravaTokensTable`** keyed by `athleteId` in `sst.config.ts`.
+  - Future multi-user features should:
+    - Use `StravaTokensTable` as the source of truth for access/refresh tokens per athlete.
+    - Treat env-based `STRAVA_REFRESH_TOKEN` as a **legacy single-user fallback** only (as commented in `sst.config.ts`).
+    - Flow:
+      - On OAuth callback, store tokens in Dynamo keyed by athlete ID.
+      - On API calls, look up tokens from Dynamo, refresh as necessary, and persist new refresh tokens back.
+  - Avoid persisting tokens or secrets in cookies or local storage; keep them server-side only.
+
+## Domain-specific behavior
+
+- **Activities listing (`/`)**
+  - Keep the home page (`+page.server.ts` + `+page.svelte`) focused on **recent Strava activities** with optional heart-rate details.
+  - If adding filters (date range, sport type) or extra metrics:
+    - Implement the data slice in `+page.server.ts` (calling into `$lib/strava`) and pass the filtered/derived data into the component.
+    - Preserve the **runs-first** bias (currently filtering for `sport_type` containing `"run"`).
+    - Maintain friendly, concise error and empty-state messages.
+
+- **Plan view (`/plan`)**
+  - The training plan is driven by static JSON (`src/data/marathon-schema.json`) plus raw activities from Strava.
+  - Mapping rules in `plan/+page.server.ts`:
+    - Parse `dd/mm/yyyy` strings into dates with `parseDmy`.
+    - Map runs to weeks by inclusive date range and `sport_type === 'Run'`.
+    - Use a **greedy distance-based matching** between planned sessions and actual runs, consuming each activity at most once.
+    - Compute `scheduledDistanceKm`, `actualDistanceKm`, `completionRatio`, and session-level flags.
+  - Future plan-like features (other races, blocks, or schemas) should follow the same pattern:
+    - Static plan definition in `src/data/**` (JSON).
+    - A dedicated **mapping module** that transforms raw Strava activities to plan progress structures.
+    - A Svelte page that only renders the already-shaped plan data.
+
+## Testing & quality
+
+- **Testing**
+  - Unit and integration tests are run via Vitest (`deno task test` / `npm run test`).
+  - Browser/component tests use `vitest-browser-svelte` and `@vitest/browser-playwright`; follow the pattern in `src/routes/page.svelte.spec.ts`:
+    - Use `render(Component)` and `page.getByRole(...)` assertions.
+  - Place tests next to the code under test, using `*.spec.ts` / `*.test.ts` naming and the existing Vitest project separation:
+    - Client Svelte tests: `src/**/*.svelte.{test,spec}.{js,ts}`.
+    - Server/logic tests: `src/**/*.{test,spec}.{js,ts}` excluding Svelte.
+  - For new logic-heavy modules (e.g. training plan mappers, token store access), add small focused tests that cover edge cases (no data, partial data, auth failures).
+
+- **Linting & formatting**
+  - Use `deno task lint` / `npm run lint` and `deno task format` / `npm run format` before committing.
+  - Obey ESLint + TypeScript + Svelte rules configured in `eslint.config.js`, including the recommendation to avoid `no-undef` on TS.
+  - Prettier (with Svelte and Tailwind plugins) defines formatting; do not hand-align or fight the formatter.
+
+## Infrastructure & deployment
+
+- **SST config**
+  - Infrastructure is defined in `sst.config.ts`:
+    - App configuration (`name`, `removal`, `protect`, `home`, `providers`).
+    - Strava secrets as `sst.Secret`s.
+    - DynamoDB `StravaTokensTable`.
+    - `sst.aws.SvelteKit` app with Cloudflare DNS and `running.danielsteman.com` domain.
+  - For new infrastructure (extra tables, queues, etc.), extend `run()` in `sst.config.ts` and link resources to the SvelteKit app via `link: [...]`.
+
+- **Env & secrets**
+  - Treat `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, and (legacy) `STRAVA_REFRESH_TOKEN` as **runtime secrets**:
+    - Locally via `.env` and `$env/static/private`.
+    - In AWS via `sst secret set` (see `README.md`).
+  - Never check secrets into git or hard-code them in Svelte components.
+
+## How to build future features
+
+- **General approach**
+  - Start from **user flows** (e.g. “see intervals per week”, “compare two training cycles”), then:
+    1. Decide what data is needed from Strava or internal schemas.
+    2. Add or extend typed helper functions in `$lib` to fetch/compute that data.
+    3. Expose the data via `+page.server.ts` or `+server.ts`.
+    4. Build Svelte UI that renders the data with the existing visual style, accessibility, and responsive layout.
+
+- **Patterns to follow**
+  - Keep **data fetching server-side**, UI rendering client-side with light logic.
+  - Use **small, composable helper functions** in `$lib` for transformation and calculations.
+  - Prefer **progressive enhancement**: graceful error/empty states, clear “needs auth” messaging, and non-blocking enrichments (like heart-rate and mocked data).
+  - When in doubt, mirror an existing page:
+    - For data dashboards, look at `/plan`.
+    - For activity lists and auth prompts, look at `/`.
+
+
