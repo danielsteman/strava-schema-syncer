@@ -1,6 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import { navigating } from '$app/stores';
 
 	let { children } = $props();
 </script>
@@ -26,6 +27,15 @@
 	<main class="site-main">
 		{@render children()}
 	</main>
+
+	{#if $navigating}
+		<div class="page-loading-overlay" aria-live="polite" aria-busy="true">
+			<div class="page-loading-backdrop"></div>
+			<div class="page-loading-content">
+				<div class="page-loading-spinner" aria-hidden="true"></div>
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -170,5 +180,102 @@
 		position: relative;
 		z-index: 1;
 		padding-bottom: 2rem;
+	}
+
+	.page-loading-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 40;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		pointer-events: auto;
+	}
+
+	.page-loading-backdrop {
+		position: absolute;
+		inset: 0;
+		background:
+			radial-gradient(circle at top, rgba(15, 23, 42, 0.5), transparent 65%),
+			radial-gradient(circle at bottom, rgba(15, 23, 42, 0.75), transparent 65%);
+		backdrop-filter: blur(22px);
+		-webkit-backdrop-filter: blur(22px);
+		opacity: 0;
+		animation: loading-fade-in 140ms ease-out forwards;
+	}
+
+	.page-loading-content {
+		position: relative;
+		display: inline-flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 1rem 1.5rem;
+		border-radius: 999px;
+		background:
+			linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9)),
+			radial-gradient(circle at top left, rgba(248, 113, 22, 0.35), transparent 55%);
+		border: 1px solid rgba(148, 163, 184, 0.75);
+		box-shadow:
+			0 20px 55px rgba(15, 23, 42, 0.98),
+			0 0 0 1px rgba(15, 23, 42, 0.9);
+		backdrop-filter: blur(26px);
+		-webkit-backdrop-filter: blur(26px);
+		animation: loading-pop 140ms ease-out forwards;
+	}
+
+	.page-loading-spinner {
+		width: 28px;
+		height: 28px;
+		border-radius: 999px;
+		border-width: 2px;
+		border-style: solid;
+		border-color: rgba(148, 163, 184, 0.25);
+		border-top-color: #f97316;
+		border-right-color: #38bdf8;
+		animation: loading-spin 620ms linear infinite;
+		box-shadow: 0 0 30px rgba(248, 113, 22, 0.55);
+	}
+
+	.page-loading-text {
+		margin: 0;
+		font-size: 0.8rem;
+		color: #e5e7eb;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		font-weight: 500;
+		opacity: 0.9;
+	}
+
+	@keyframes loading-spin {
+		from {
+			transform: rotate(0deg);
+		}
+
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	@keyframes loading-pop {
+		from {
+			opacity: 0;
+			transform: translateY(6px) scale(0.96);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+	}
+
+	@keyframes loading-fade-in {
+		from {
+			opacity: 0;
+		}
+
+		to {
+			opacity: 1;
+		}
 	}
 </style>
