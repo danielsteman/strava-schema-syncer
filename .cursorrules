@@ -134,4 +134,18 @@
     - For data dashboards, look at `/plan`.
     - For activity lists and auth prompts, look at `/`.
 
+## Cursor assistant behavior
+
+- **Code changes vs. suggestions**
+  - By default, when the user asks for a code change, the assistant should **apply the change directly to the workspace files** using tools (so Cursor shows an inline diff that can be accepted or discarded), instead of only pasting suggested code in chat.
+  - Only provide **chat-only code suggestions** (without editing files) if the user explicitly asks for examples, pseudo-code, or “don’t change the codebase yet”.
+  - For non-trivial edits, the assistant should:
+    - Summarize the intended change briefly.
+    - Apply the change via file-edit tools so the user can review it in Cursor’s diff/changes view.
+
+- **Registering new patterns**
+  - Whenever the assistant introduces a **new pattern, convention, or recurring workflow** (for example, a standard way to map Strava data, structure plan mappers, or organize tests), it should **add or update a corresponding section in `.cursorrules`** to document that pattern.
+  - New patterns should be written in the same style as existing sections (short bullets, clear headings) and placed in the most relevant section (e.g. “Strava & data access patterns”, “Testing & quality”), creating a new subsection only when it clearly doesn’t fit elsewhere.
+  - If an earlier pattern is superseded, the assistant should **update or replace** the old guidance in `.cursorrules` instead of duplicating or contradicting it.
+
 

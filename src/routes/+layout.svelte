@@ -3,7 +3,25 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { navigating } from '$app/stores';
 
-	let { children } = $props();
+	let { children, data } = $props<{
+		children: () => unknown;
+		data: {
+			user: {
+				athleteId: string;
+				firstName: string | null;
+				initial: string;
+			} | null;
+		};
+	}>();
+	let userMenuOpen = $state(false);
+
+	const toggleUserMenu = () => {
+		userMenuOpen = !userMenuOpen;
+	};
+
+	const closeUserMenu = () => {
+		userMenuOpen = false;
+	};
 </script>
 
 <svelte:head>
@@ -18,10 +36,31 @@
 
 	<header class="site-nav">
 		<a href="/" class="brand">Strava schema syncer</a>
-		<nav class="links">
-			<a href="/">Home</a>
-			<a href="/plan">Plan</a>
-		</nav>
+		<div class="nav-right">
+			<nav class="links">
+				<a href="/">Home</a>
+				<a href="/plan">Plan</a>
+			</nav>
+
+			<div class="user-menu" onfocusout={closeUserMenu}>
+				<button
+					type="button"
+					class="avatar-button"
+					aria-label="Account"
+					aria-haspopup="menu"
+					aria-expanded={userMenuOpen}
+					onclick={toggleUserMenu}
+				>
+					<span class="avatar-initials">{data.user?.initial ?? 'S'}</span>
+				</button>
+
+				{#if userMenuOpen}
+					<div class="user-menu-dropdown" role="menu">
+						<a href="/auth/logout" role="menuitem">Logout</a>
+					</div>
+				{/if}
+			</div>
+		</div>
 	</header>
 
 	<main class="site-main">
@@ -33,6 +72,7 @@
 			<div class="page-loading-backdrop"></div>
 			<div class="page-loading-content">
 				<div class="page-loading-spinner" aria-hidden="true"></div>
+				<p class="page-loading-text">Loading…</p>
 			</div>
 		</div>
 	{/if}
@@ -143,6 +183,12 @@
 		font-size: 0.95rem;
 	}
 
+	.nav-right {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
 	.links {
 		display: flex;
 		gap: 1rem;
@@ -174,6 +220,72 @@
 
 	.links a:hover::after {
 		width: 100%;
+	}
+
+	.user-menu {
+		position: relative;
+	}
+
+	.avatar-button {
+		width: 32px;
+		height: 32px;
+		border-radius: 999px;
+		border: 1px solid rgba(148, 163, 184, 0.7);
+		background:
+			linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.86)),
+			radial-gradient(circle at top left, rgba(248, 113, 22, 0.4), transparent 60%);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: #e5e7eb;
+		font-size: 0.75rem;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow:
+			0 10px 30px rgba(15, 23, 42, 0.9),
+			0 0 0 1px rgba(15, 23, 42, 0.9);
+		padding: 0;
+	}
+
+	.avatar-button:hover {
+		border-color: rgba(248, 113, 22, 0.9);
+	}
+
+	.avatar-initials {
+		text-transform: uppercase;
+	}
+
+	.user-menu-dropdown {
+		position: absolute;
+		right: 0;
+		margin-top: 0.4rem;
+		min-width: 150px;
+		border-radius: 0.6rem;
+		background:
+			linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9)),
+			radial-gradient(circle at top right, rgba(56, 189, 248, 0.22), transparent 60%);
+		border: 1px solid rgba(148, 163, 184, 0.7);
+		box-shadow:
+			0 20px 55px rgba(15, 23, 42, 0.98),
+			0 0 0 1px rgba(15, 23, 42, 0.9);
+		backdrop-filter: blur(22px);
+		-webkit-backdrop-filter: blur(22px);
+		padding: 0.35rem 0.25rem;
+		z-index: 30;
+	}
+
+	.user-menu-dropdown a {
+		display: block;
+		padding: 0.4rem 0.7rem;
+		font-size: 0.8rem;
+		color: #e5e7eb;
+		text-decoration: none;
+		border-radius: 0.4rem;
+	}
+
+	.user-menu-dropdown a:hover {
+		background: rgba(15, 23, 42, 0.96);
+		color: #f97316;
 	}
 
 	.site-main {

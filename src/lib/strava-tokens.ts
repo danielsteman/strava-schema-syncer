@@ -10,6 +10,7 @@ type StravaTokenRow = {
 	scope: string;
 	createdAt: string;
 	updatedAt: string;
+	athleteFirstName?: string;
 };
 
 const STRAVA_TOKENS_TABLE_NAME = env.STRAVA_TOKENS_TABLE_NAME;

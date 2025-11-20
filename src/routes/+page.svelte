@@ -63,34 +63,35 @@
 </script>
 
 <main class="page">
-	<section class="header">
-		<div>
-			<h1>My Strava activities</h1>
-			<p>
-				Recent activities fetched from the Strava API. Connect your account once and we will keep
-				tokens refreshed for you.
-			</p>
-		</div>
-		<a class="button" href="/auth/strava">
-			{#if data.needsAuth}
-				Connect Strava
-			{:else}
-				Reconnect / Switch Strava account
-			{/if}
-		</a>
-	</section>
+	{#if data.needsAuth}
+		<section class="hero">
+			<div class="hero-card">
+				<h1>Connect Strava</h1>
+				<p>
+					Authorize access to your Strava account so we can pull in recent runs and map them onto
+					your training plan.
+				</p>
+				<a class="button hero-button" href="/auth/strava">Connect Strava</a>
+			</div>
+		</section>
+	{:else}
+		<section class="header">
+			<div>
+				<h1>My Strava activities</h1>
+				<p>
+					Recent activities fetched from the Strava API. Connect your account once and we will keep
+					tokens refreshed for you.
+				</p>
+			</div>
+			<a class="button" href="/auth/strava">Reconnect / Switch Strava account</a>
+		</section>
+	{/if}
 
 	{#if data.errorMessage}
 		<p class="message message-error">{data.errorMessage}</p>
 	{/if}
 
-	{#if data.needsAuth}
-		<p class="message">
-			Strava authorization is required or has expired. Click
-			<a href="/auth/strava">Connect Strava</a>
-			to continue.
-		</p>
-	{:else if runActivities && runActivities.length > 0}
+	{#if !data.needsAuth && runActivities && runActivities.length > 0}
 		<section class="activities">
 			{#each runActivities as activity}
 				<article class="activity-card">
@@ -156,7 +157,7 @@
 				</article>
 			{/each}
 		</section>
-	{:else}
+	{:else if !data.needsAuth}
 		<p class="message">
 			No running activities found yet. Try a different day or re-authorize Strava.
 		</p>
@@ -177,6 +178,44 @@
 		color: #e5e7eb;
 		position: relative;
 		z-index: 1;
+	}
+
+	.hero {
+		min-height: calc(100vh - 7rem);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.hero-card {
+		max-width: 520px;
+		padding: 2.25rem 2.5rem;
+		border-radius: 1.25rem;
+		background:
+			linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.86)),
+			radial-gradient(circle at top right, rgba(56, 189, 248, 0.22), transparent 60%);
+		border: 1px solid rgba(148, 163, 184, 0.7);
+		box-shadow:
+			0 26px 70px rgba(15, 23, 42, 0.98),
+			0 0 0 1px rgba(15, 23, 42, 0.9);
+		backdrop-filter: blur(26px);
+		-webkit-backdrop-filter: blur(26px);
+		text-align: center;
+	}
+
+	.hero-card h1 {
+		margin: 0 0 0.6rem;
+		font-size: clamp(2.2rem, 3.2vw, 2.6rem);
+	}
+
+	.hero-card p {
+		margin: 0 0 1.6rem;
+		color: #9ca3af;
+	}
+
+	.hero-button {
+		min-width: 180px;
+		justify-content: center;
 	}
 
 	.header {

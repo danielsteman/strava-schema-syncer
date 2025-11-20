@@ -96,6 +96,7 @@ async function refreshAccessTokenForAthlete(athleteId: string): Promise<string> 
 		accessToken: json.access_token,
 		refreshToken: json.refresh_token,
 		expiresAt: json.expires_at,
+		athleteFirstName: existing.athleteFirstName,
 		scope: json.scope ?? existing.scope,
 		createdAt: existing.createdAt ?? nowIso,
 		updatedAt: nowIso
@@ -123,7 +124,13 @@ async function getAccessToken(athleteId?: string): Promise<string> {
 		return refreshAccessTokenForAthlete(athleteId);
 	}
 
-	// Legacy single-user behaviour: use the refresh token from .env and keep
+	// No athlete selected in this browser – treat as \"not connected\".
+	throw new Error('No stored Strava tokens for the current athlete');
+
+	// Legacy single-user behaviour (disabled now that we support multi-user):
+	// use the refresh token from .env and keep tokens in memory for the
+	// lifetime of the process. If you want to re-enable this, move the early
+	// throw above behind an explicit feature flag.
 	// tokens in memory for the lifetime of the process.
 	let currentAccessToken: string | null = null;
 	let currentRefreshToken: string | null = STRAVA_REFRESH_TOKEN ?? null;

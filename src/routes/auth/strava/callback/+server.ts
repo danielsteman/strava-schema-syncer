@@ -13,6 +13,7 @@ type StravaTokenResponse = {
 
 type StravaAthlete = {
 	id: number;
+	firstname?: string;
 	[key: string]: unknown;
 };
 
@@ -73,6 +74,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		refreshToken: tokenJson.refresh_token,
 		expiresAt: tokenJson.expires_at,
 		scope: 'activity:read_all',
+		athleteFirstName: athlete?.firstname,
 		createdAt: nowIso,
 		updatedAt: nowIso
 	});
