@@ -1,4 +1,5 @@
-import { STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+import { Resource } from 'sst';
 import { getTokensForAthlete, putTokensForAthlete } from './strava-tokens.ts';
 
 // Minimal shape for the activities we care about from Strava's /athlete/activities endpoint.
@@ -70,6 +71,20 @@ type StravaRefreshResponse = {
 // Docs: https://developers.strava.com/docs/authentication/
 async function refreshAccessTokenForAthlete(athleteId: string): Promise<string> {
 	const existing = await getTokensForAthlete(athleteId);
+
+	// Access secrets: try SST Resource object first (for deployed), then env vars (for local dev)
+	let STRAVA_CLIENT_ID: string | undefined;
+	let STRAVA_CLIENT_SECRET: string | undefined;
+
+	try {
+		STRAVA_CLIENT_ID = Resource.STRAVA_CLIENT_ID?.value;
+		STRAVA_CLIENT_SECRET = Resource.STRAVA_CLIENT_SECRET?.value;
+	} catch {
+		// Resource might not be available in all contexts
+	}
+
+	STRAVA_CLIENT_ID = STRAVA_CLIENT_ID ?? env.STRAVA_CLIENT_ID;
+	STRAVA_CLIENT_SECRET = STRAVA_CLIENT_SECRET ?? env.STRAVA_CLIENT_SECRET;
 
 	if (!STRAVA_CLIENT_ID || !STRAVA_CLIENT_SECRET || !existing?.refreshToken) {
 		throw new Error('Missing Strava client credentials or stored refresh token');

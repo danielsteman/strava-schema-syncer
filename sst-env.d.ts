@@ -5,6 +5,10 @@
 
 declare module "sst" {
   export interface Resource {
+    "CutThroughTheTraffic": {
+      "type": "sst.aws.SvelteKit"
+      "url": string
+    }
     "STRAVA_CLIENT_ID": {
       "type": "sst.sst.Secret"
       "value": string
@@ -16,10 +20,6 @@ declare module "sst" {
     "STRAVA_REFRESH_TOKEN": {
       "type": "sst.sst.Secret"
       "value": string
-    }
-    "StravaSchemaSyncer": {
-      "type": "sst.aws.SvelteKit"
-      "url": string
     }
     "StravaTokensTable": {
       "name": string
