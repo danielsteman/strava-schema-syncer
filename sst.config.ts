@@ -2,7 +2,7 @@
 export default $config({
 	app(input) {
 		return {
-			name: 'strava-schema-syncer',
+			name: 'cut-through-the-traffic',
 			removal: input?.stage === 'production' ? 'retain' : 'remove',
 			protect: ['production'].includes(input?.stage),
 			home: 'aws',
@@ -34,7 +34,7 @@ export default $config({
 
 		const isProd = $app.stage === 'production';
 
-		new sst.aws.SvelteKit('StravaSchemaSyncer', {
+		new sst.aws.SvelteKit('CutThroughTheTraffic', {
 			...(isProd && {
 				domain: {
 					name: 'running.danielsteman.com',

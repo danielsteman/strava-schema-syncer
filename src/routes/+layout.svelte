@@ -50,7 +50,7 @@
 	</div>
 
 	<header class="site-nav">
-		<a href="/" class="brand">Strava Schema Syncer</a>
+		<a href="/" class="brand">Cut Through the Traffic 🏃💨</a>
 		<div class="nav-right">
 			<nav class="links">
 				<a href="/">Home</a>

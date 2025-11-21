@@ -1,6 +1,6 @@
-## strava-schema-syncer
+## Cut Through the Traffic
 
-Single-user SvelteKit app that authenticates with Strava via OAuth and displays your recent activities.
+A web app that helps you to create a training plan for your next marathon. The project was started to help my friend and I keep track of our progression while training for the big day.
 
 ### Developing
 
