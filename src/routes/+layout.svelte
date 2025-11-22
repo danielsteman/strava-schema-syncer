@@ -55,6 +55,7 @@
 			<nav class="links">
 				<a href="/">Home</a>
 				<a href="/plan">Plan</a>
+				<a href="/support">Support</a>
 			</nav>
 
 			{#if data.user}
