@@ -66,20 +66,20 @@
 	{#if data.needsAuth}
 		<section class="hero">
 			<div class="hero-card">
-				<h1>Connect Strava</h1>
+				<h1>Connect your account</h1>
 				<p>
-					Authorize access to your Strava account so we can pull in recent runs and map them onto
-					your training plan.
+					Authorize access to your account so we can pull in recent runs and map them onto your
+					training plan.
 				</p>
-				<a class="button hero-button" href="/auth/strava">Connect Strava</a>
+				<a class="button hero-button" href="/auth/strava">Connect account</a>
 			</div>
 		</section>
 	{:else}
 		<section class="header">
 			<div>
-				<h1>My Strava activities</h1>
+				<h1>My activities</h1>
 				<p>
-					Recent activities fetched from the Strava API. Connect your account once and we will keep
+					Recent activities fetched from your connected account. Connect once and we will keep
 					tokens refreshed for you.
 				</p>
 			</div>
@@ -160,7 +160,7 @@
 		</section>
 	{:else if !data.needsAuth}
 		<p class="message">
-			No running activities found yet. Try a different day or re-authorize Strava.
+			No running activities found yet. Try a different day or re-authorize your account.
 		</p>
 	{/if}
 </main>

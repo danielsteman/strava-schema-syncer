@@ -271,8 +271,7 @@ export async function getRecentActivities(
 			return {
 				activities: null,
 				needsAuth: true,
-				errorMessage:
-					'Strava authorization failed or expired. Please re-authorize via the Connect Strava button.'
+				errorMessage: 'Authorization failed or expired. Please re-authorize via the connect button.'
 			};
 		}
 
@@ -281,7 +280,7 @@ export async function getRecentActivities(
 			return {
 				activities: null,
 				needsAuth: false,
-				errorMessage: `Failed to fetch activities from Strava: ${text}`
+				errorMessage: `Failed to fetch activities: ${text}`
 			};
 		}
 
@@ -311,7 +310,7 @@ export async function getRecentActivities(
 				activities: null,
 				needsAuth: true,
 				errorMessage:
-					'Strava credentials are not configured. Set STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET and STRAVA_ACCESS_TOKEN or STRAVA_REFRESH_TOKEN in your .env.'
+					'Credentials are not configured. Set STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET and STRAVA_ACCESS_TOKEN or STRAVA_REFRESH_TOKEN in your .env.'
 			};
 		}
 

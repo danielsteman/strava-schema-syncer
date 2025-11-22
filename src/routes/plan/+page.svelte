@@ -26,14 +26,14 @@
 		<div>
 			<h1>Marathon training overview</h1>
 			<p>
-				Plan vs. completed distance per week, based on your Strava activities mapped onto the
+				Plan vs. completed distance per week, based on your connected activities mapped onto the
 				marathon training schema.
 			</p>
 		</div>
 
 		<div class="header-actions">
 			{#if data.needsAuth}
-				<a class="toggle connect" href="/auth/strava">Connect Strava</a>
+				<a class="toggle connect" href="/auth/strava">Connect account</a>
 			{/if}
 
 			<button
@@ -43,7 +43,7 @@
 				aria-pressed={showExample}
 			>
 				{#if showExample}
-					View live Strava data
+					View live data
 				{:else}
 					View example data
 				{/if}
@@ -57,8 +57,8 @@
 
 	{#if data.needsAuth}
 		<p class="message">
-			Strava authorization is required to show live progress. Authorize on the home page and then
-			return here to see your plan vs. actual distance.
+			Authorization is required to show live progress. Connect on the home page and then return here
+			to see your plan vs. actual distance.
 		</p>
 	{/if}
 
@@ -69,8 +69,8 @@
 		</p>
 	{:else if !hasLiveData}
 		<p class="message info">
-			No Strava runs fall into the plan dates yet, so all weeks show as <em>Not started</em>. You
-			can switch to example data to preview the layout.
+			No runs from your connected account fall into the plan dates yet, so all weeks show as
+			<em>Not started</em>. You can switch to example data to preview the layout.
 		</p>
 	{/if}
 

@@ -23,12 +23,12 @@ type StravaAthlete = {
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	const error = url.searchParams.get('error');
 	if (error) {
-		return new Response(`Strava authorization error: ${error}`, { status: 400 });
+		return new Response(`Authorization error from provider: ${error}`, { status: 400 });
 	}
 
 	const code = url.searchParams.get('code');
 	if (!code) {
-		return new Response('Missing authorization code from Strava', { status: 400 });
+		return new Response('Missing authorization code from provider', { status: 400 });
 	}
 
 	// Access secrets: try SST Resource object first (for deployed), then env vars (for local dev)
@@ -44,7 +44,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	STRAVA_CLIENT_SECRET = STRAVA_CLIENT_SECRET ?? env.STRAVA_CLIENT_SECRET;
 
 	if (!STRAVA_CLIENT_ID || !STRAVA_CLIENT_SECRET) {
-		return new Response('Strava client credentials are not configured on the server', {
+		return new Response('Client credentials are not configured on the server', {
 			status: 500
 		});
 	}
@@ -75,7 +75,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const athleteId = athlete?.id?.toString();
 
 	if (!athleteId) {
-		return new Response('Missing athlete information in Strava response', { status: 500 });
+		return new Response('Missing athlete information in provider response', { status: 500 });
 	}
 
 	const nowIso = new Date().toISOString();
