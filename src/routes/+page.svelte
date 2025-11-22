@@ -1,4 +1,5 @@
 <script lang="ts">
+	import btnStravaConnect from '$lib/assets/btn_strava_connect_with_orange.svg';
 	let { data } = $props<{
 		data: {
 			activities:
@@ -71,7 +72,9 @@
 					Authorize access to your account so we can pull in recent runs and map them onto your
 					training plan.
 				</p>
-				<a class="button hero-button" href="/auth/strava">Connect account</a>
+				<a class="hero-connect" href="/auth/strava">
+					<img src={btnStravaConnect} alt="Connect with Strava" />
+				</a>
 			</div>
 		</section>
 	{:else}
@@ -214,9 +217,15 @@
 		color: #9ca3af;
 	}
 
-	.hero-button {
-		min-width: 180px;
-		justify-content: center;
+	.hero-connect {
+		display: inline-block;
+		margin-top: 0.75rem;
+	}
+
+	.hero-connect img {
+		display: block;
+		max-width: 100%;
+		height: auto;
 	}
 
 	.header {
@@ -237,34 +246,6 @@
 		color: #9ca3af;
 	}
 
-	.button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0.6rem 1rem;
-		border-radius: 999px;
-		background: radial-gradient(circle at 0% 0%, #fed7aa, #f97316);
-		color: #0b1120;
-		text-decoration: none;
-		font-weight: 600;
-		font-size: 0.95rem;
-		box-shadow:
-			0 14px 40px rgba(248, 113, 22, 0.45),
-			0 0 0 1px rgba(15, 23, 42, 0.6);
-		white-space: nowrap;
-		transition:
-			transform 140ms ease-out,
-			box-shadow 140ms ease-out,
-			background 140ms ease-out;
-	}
-
-	.button:hover {
-		background: radial-gradient(circle at 0% 0%, #fed7aa, #fb923c);
-		transform: translateY(-1px);
-		box-shadow:
-			0 18px 50px rgba(248, 113, 22, 0.55),
-			0 0 0 1px rgba(15, 23, 42, 0.7);
-	}
 
 	.message {
 		margin-bottom: 1.5rem;
@@ -284,10 +265,6 @@
 
 	.message-error {
 		border: 1px solid rgba(248, 113, 22, 0.85);
-	}
-
-	.message a {
-		color: #38bdf8;
 	}
 
 	.activities {
