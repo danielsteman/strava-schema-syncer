@@ -85,6 +85,13 @@
 		{@render children()}
 	</main>
 
+	<footer class="site-footer">
+		<nav class="footer-links">
+			<a href="/privacy">Privacy</a>
+			<a href="/terms">Terms</a>
+		</nav>
+	</footer>
+
 	{#if $navigating}
 		<div class="page-loading-overlay" aria-live="polite" aria-busy="true">
 			<div class="page-loading-backdrop"></div>
@@ -316,6 +323,51 @@
 		position: relative;
 		z-index: 1;
 		padding-bottom: 2rem;
+	}
+
+	.site-footer {
+		margin-top: 3rem;
+		padding: 1.5rem 1.7rem;
+		border-top: 1px solid rgba(148, 163, 184, 0.15);
+		background:
+			linear-gradient(120deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.75)),
+			radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.15), transparent 55%);
+		backdrop-filter: blur(22px);
+		-webkit-backdrop-filter: blur(22px);
+	}
+
+	.footer-links {
+		display: flex;
+		gap: 1.5rem;
+		justify-content: center;
+		font-size: 0.85rem;
+	}
+
+	.footer-links a {
+		color: #9ca3af;
+		text-decoration: none;
+		position: relative;
+		padding: 0.1rem 0;
+	}
+
+	.footer-links a:hover {
+		color: #f97316;
+	}
+
+	.footer-links a::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: -0.15rem;
+		width: 0;
+		height: 1px;
+		background: linear-gradient(90deg, #f97316, #38bdf8);
+		transition: width 160ms ease-out;
+		opacity: 0.9;
+	}
+
+	.footer-links a:hover::after {
+		width: 100%;
 	}
 
 	.page-loading-overlay {
