@@ -20,12 +20,6 @@ jobs:
     permissions:
       contents: read
 
-    env:
-      # Select SST stage based on event type:
-      # - push to main => production
-      # - PR to main   => development
-      SST_STAGE: ${{ github.event_name == 'push' ? 'production' : 'development' }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -51,5 +45,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy with SST
-        run: deno run -A npm:sst deploy --stage "$SST_STAGE"
+      - name: Deploy with SST (production)
+        if: github.event_name == 'push'
+        run: deno run -A npm:sst deploy --stage production
+
+      - name: Deploy with SST (development)
+        if: github.event_name == 'pull_request'
+        run: deno run -A npm:sst deploy --stage development
