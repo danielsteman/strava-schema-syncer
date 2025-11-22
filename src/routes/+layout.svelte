@@ -54,7 +54,9 @@
 		<div class="nav-right">
 			<nav class="links">
 				<a href="/">Home</a>
-				<a href="/plan">Plan</a>
+				{#if data.user}
+					<a href="/plan">Plan</a>
+				{/if}
 				<a href="/support">Support</a>
 			</nav>
 
