@@ -1,6 +1,8 @@
 import { Resource } from 'sst';
 import process from 'node:process';
-import pg, { type Pool } from 'pg';
+import pg from 'pg';
+
+type Pool = ReturnType<typeof createPool>;
 
 let pool: Pool | null = null;
 
@@ -8,9 +10,10 @@ function getConnectionString(): string {
 	let conn: string | undefined;
 
 	try {
-		conn = (Resource as any).POSTGRES_CONNECTION_STRING?.value as
-			| string
-			| undefined;
+		const r = Resource as unknown as {
+			POSTGRES_CONNECTION_STRING?: { value: string };
+		};
+		conn = r.POSTGRES_CONNECTION_STRING?.value;
 	} catch {
 		// Resource may not be available in local non-SST contexts.
 	}
@@ -24,11 +27,15 @@ function getConnectionString(): string {
 	return conn;
 }
 
+function createPool() {
+	return new pg.Pool({
+		connectionString: getConnectionString()
+	});
+}
+
 function getPool(): Pool {
 	if (!pool) {
-		pool = new Pool({
-			connectionString: getConnectionString()
-		});
+		pool = createPool();
 	}
 	return pool;
 }
@@ -53,10 +60,10 @@ export async function ensureSchema(): Promise<void> {
 
 	const p = getPool();
 	const client = await p.connect();
-
 	try {
 		await client.query('BEGIN');
 
+		// Core tables for Telegram users and messages.
 		await client.query(`
 			CREATE TABLE IF NOT EXISTS users (
 				id BIGSERIAL PRIMARY KEY,
@@ -84,6 +91,33 @@ export async function ensureSchema(): Promise<void> {
 			ON messages (user_id, created_at DESC)
 		`);
 
+		// Optional RAG schema for WhatsApp chat history, backed by pgvector.
+		// Note: this assumes the "vector" extension is available in the Neon database.
+		await client.query(`
+			CREATE EXTENSION IF NOT EXISTS vector
+		`);
+
+		await client.query(`
+			CREATE TABLE IF NOT EXISTS whatsapp_chunks (
+				id BIGSERIAL PRIMARY KEY,
+				user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+				source TEXT NOT NULL DEFAULT 'whatsapp',
+				chunk_index INT NOT NULL,
+				text TEXT NOT NULL,
+				start_timestamp TIMESTAMPTZ NOT NULL,
+				end_timestamp TIMESTAMPTZ NOT NULL,
+				metadata JSONB,
+				embedding vector(768)
+			)
+		`);
+
+		await client.query(`
+			CREATE INDEX IF NOT EXISTS whatsapp_chunks_embedding_idx
+			ON whatsapp_chunks
+			USING ivfflat (embedding vector_cosine_ops)
+			WITH (lists = 100)
+		`);
+
 		await client.query('COMMIT');
 		schemaEnsured = true;
 	} catch (err) {
@@ -93,5 +127,3 @@ export async function ensureSchema(): Promise<void> {
 		client.release();
 	}
 }
-
-

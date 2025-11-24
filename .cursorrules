@@ -64,6 +64,22 @@
       - On API calls, look up tokens from Dynamo, refresh as necessary, and persist new refresh tokens back.
   - Avoid persisting tokens or secrets in cookies or local storage; keep them server-side only.
 
+## RAG, embeddings & external conversations
+
+- **WhatsApp chat ingestion**
+  - Use `$lib/whatsapp` to parse `.txt` exports and chunk messages (`parseWhatsAppExport`, `chunkMessages`).
+  - The ingestion script `src/functions/ingest-whatsapp.ts` is the canonical place for batch-loading WhatsApp history into Neon.
+  - Run it locally via Deno with `deno run -A src/functions/ingest-whatsapp.ts /path/to/chat.txt` once `POSTGRES_CONNECTION_STRING` and `GEMINI_API_KEY` are configured.
+
+- **Embeddings**
+  - Use `$lib/gemini-embeddings` and the `embedTexts()` helper to generate text embeddings with Gemini (`text-embedding-004`).
+  - The Postgres schema for embeddings lives in `ensureSchema()` in `$lib/db.ts` and uses the `vector` extension and a `whatsapp_chunks` table.
+  - When adding new embedding-backed features, prefer a dedicated table per domain (e.g. `whatsapp_chunks`, `coach_notes_chunks`) with a `vector(768)` column and an `ivfflat` index.
+
+- **RAG retrieval**
+  - Use `$lib/whatsapp-rag` (`retrieveRelevantWhatsappChunks`) to perform similarity search over WhatsApp chunks for a given question, optionally scoped by `userId`.
+  - New RAG helpers should follow the same pattern: a small `$lib` module that (a) embeds the query, (b) runs a `vector` similarity query in Neon, and (c) returns domain-specific rows for the AI coach or other consumers.
+
 ## Domain-specific behavior
 
 - **Activities listing (`/`)**
@@ -148,5 +164,3 @@
   - Whenever the assistant introduces a **new pattern, convention, or recurring workflow** (for example, a standard way to map Strava data, structure plan mappers, or organize tests), it should **add or update a corresponding section in `.cursorrules`** to document that pattern.
   - New patterns should be written in the same style as existing sections (short bullets, clear headings) and placed in the most relevant section (e.g. “Strava & data access patterns”, “Testing & quality”), creating a new subsection only when it clearly doesn’t fit elsewhere.
   - If an earlier pattern is superseded, the assistant should **update or replace** the old guidance in `.cursorrules` instead of duplicating or contradicting it.
-
-
