@@ -5,7 +5,10 @@ function getGeminiApiKey(): string {
 	let apiKey: string | undefined;
 
 	try {
-		apiKey = (Resource as any).GEMINI_API_KEY?.value as string | undefined;
+		const r = Resource as unknown as {
+			GEMINI_API_KEY?: { value: string };
+		};
+		apiKey = r.GEMINI_API_KEY?.value;
 	} catch {
 		// Resource may not be available in local non-SST contexts.
 	}
@@ -30,51 +33,61 @@ export async function embedTexts(texts: string[]): Promise<number[][]> {
 
 	const apiKey = getGeminiApiKey();
 	const url = new URL(
-		'https://generativelanguage.googleapis.com/v1/models/text-embedding-004:embedContent'
+		'https://generativelanguage.googleapis.com/v1/models/text-embedding-004:batchEmbedContents'
 	);
 	url.searchParams.set('key', apiKey);
 
-	const body = {
-		requests: texts.map((text) => ({
-			model: 'models/text-embedding-004',
-			content: {
-				parts: [{ text }]
-			}
-		}))
-	};
+	const allEmbeddings: number[][] = [];
+	const maxBatchSize = 100;
 
-	const res = await fetch(url, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(body)
-	});
+	for (let start = 0; start < texts.length; start += maxBatchSize) {
+		const batch = texts.slice(start, start + maxBatchSize);
 
-	if (!res.ok) {
-		const errText = await res.text();
-		throw new Error(`Gemini embeddings failed: ${res.status} ${errText}`);
-	}
+		const body = {
+			requests: batch.map((text) => ({
+				model: 'models/text-embedding-004',
+				content: {
+					parts: [{ text }]
+				}
+			}))
+		};
 
-	const json = (await res.json()) as {
-		responses?: { embedding?: { values?: number[] } }[];
-	};
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
 
-	const responses = json.responses ?? [];
-
-	if (responses.length !== texts.length) {
-		throw new Error(
-			`Gemini embeddings: response length ${responses.length} does not match texts length ${texts.length}`
-		);
-	}
-
-	return responses.map((r, idx) => {
-		const values = r.embedding?.values;
-		if (!values || values.length === 0) {
-			throw new Error(`Gemini embeddings: missing embedding for index ${idx}`);
+		if (!res.ok) {
+			const errText = await res.text();
+			throw new Error(`Gemini embeddings failed: ${res.status} ${errText}`);
 		}
-		return values;
-	});
+
+		const json = (await res.json()) as {
+			embeddings?: { values?: number[] }[];
+		};
+
+		const embeddings = json.embeddings ?? [];
+
+		if (embeddings.length !== batch.length) {
+			throw new Error(
+				`Gemini embeddings: response length ${
+					embeddings.length
+				} does not match batch length ${batch.length}`
+			);
+		}
+
+		for (let i = 0; i < embeddings.length; i += 1) {
+			const e = embeddings[i];
+			const values = e.values;
+			if (!values || values.length === 0) {
+				throw new Error(`Gemini embeddings: missing embedding for index ${start + i}`);
+			}
+			allEmbeddings.push(values);
+		}
+	}
+
+	return allEmbeddings;
 }
-
-

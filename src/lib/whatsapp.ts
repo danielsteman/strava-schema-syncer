@@ -4,8 +4,11 @@ export type WhatsAppMessage = {
 	text: string;
 };
 
+// Supports both common WhatsApp export formats, for example:
+// - "24/11/2025, 15:18 - Name: Message"
+// - "[24/11/2025, 15:18:13] Name: Message"
 const LINE_RE =
-	/^(\d{1,2}\/\d{1,2}\/\d{2,4}), (\d{1,2}:\d{2}) - (.*)$/;
+	/^\[?(\d{1,2}\/\d{1,2}\/\d{2,4}), (\d{1,2}:\d{2}(?::\d{2})?)\]?(?: -)? (.*)$/;
 
 /**
  * Parse a WhatsApp chat export `.txt` into structured messages.
