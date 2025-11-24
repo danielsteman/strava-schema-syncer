@@ -26,7 +26,9 @@ export async function retrieveRelevantWhatsappChunks(params: {
 	const { question, limit = 10, userId } = params;
 	const [embedding] = await embedTexts([question]);
 
-	const values: unknown[] = [embedding, limit];
+	const embeddingLiteral = `[${embedding.join(',')}]`;
+
+	const values: unknown[] = [embeddingLiteral, limit];
 	let whereClause = '';
 
 	if (typeof userId === 'number') {
@@ -47,7 +49,7 @@ export async function retrieveRelevantWhatsappChunks(params: {
 			metadata
 		FROM whatsapp_chunks
 		${whereClause}
-		ORDER BY embedding <-> $1
+		ORDER BY embedding <-> $1::vector
 		LIMIT $2
 	`,
 		values

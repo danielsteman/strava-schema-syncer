@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 import { ensureSchema, query } from '../lib/db.ts';
 import { embedTexts } from '../lib/gemini-embeddings.ts';
 import { chunkMessages, parseWhatsAppExport } from '../lib/whatsapp.ts';
@@ -20,6 +21,11 @@ async function main(): Promise<void> {
 	const messages = parseWhatsAppExport(raw);
 	const chunks = chunkMessages(messages, 1500);
 
+	// eslint-disable-next-line no-console
+	console.log(
+		`Parsed ${messages.length} WhatsApp messages into ${chunks.length} chunks from ${absolutePath}`
+	);
+
 	if (chunks.length === 0) {
 		// eslint-disable-next-line no-console
 		console.log('No messages found in WhatsApp export; nothing to ingest.');
@@ -31,6 +37,8 @@ async function main(): Promise<void> {
 	const userId: number | null = null;
 
 	const texts = chunks.map((c) => c.text);
+	// eslint-disable-next-line no-console
+	console.log(`Requesting embeddings for ${texts.length} chunks from Gemini...`);
 	const embeddings = await embedTexts(texts);
 
 	if (embeddings.length !== chunks.length) {
@@ -42,6 +50,10 @@ async function main(): Promise<void> {
 	for (let i = 0; i < chunks.length; i += 1) {
 		const chunk = chunks[i];
 		const embedding = embeddings[i];
+
+		// pgvector expects either its custom literal or an explicit cast; we send
+		// the text form and let Postgres cast it to `vector`.
+		const embeddingLiteral = `[${embedding.join(',')}]`;
 
 		await query(
 			`
@@ -65,9 +77,14 @@ async function main(): Promise<void> {
 				chunk.startTimestamp.toISOString(),
 				chunk.endTimestamp.toISOString(),
 				JSON.stringify({ chatFile: path.basename(absolutePath) }),
-				embedding
+				embeddingLiteral
 			]
 		);
+
+		if ((i + 1) % 50 === 0 || i === chunks.length - 1) {
+			// eslint-disable-next-line no-console
+			console.log(`Inserted ${i + 1}/${chunks.length} whatsapp_chunks rows...`);
+		}
 	}
 
 	// eslint-disable-next-line no-console
