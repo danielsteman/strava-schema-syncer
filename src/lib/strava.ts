@@ -52,6 +52,20 @@ export type ActivitiesResult = {
 	errorMessage?: string;
 };
 
+export type GetActivitiesForPeriodParams = {
+	athleteId: string;
+	after: Date;
+	before?: Date;
+	perPage?: number;
+	maxPages?: number;
+};
+
+export type ActivitiesForPeriodResult = {
+	activities: StravaActivity[];
+	needsAuth: boolean;
+	errorMessage?: string;
+};
+
 type StravaRefreshResponse = {
 	access_token: string;
 	expires_at: number;
@@ -149,6 +163,97 @@ async function getAccessToken(athleteId?: string): Promise<string> {
 
 	// No athlete selected in this browser – treat as \"not connected\".
 	throw new Error('No stored Strava tokens for the current athlete');
+}
+
+export async function getActivitiesForPeriod(
+	params: GetActivitiesForPeriodParams
+): Promise<ActivitiesForPeriodResult> {
+	const { athleteId, after, before, perPage = 50, maxPages = 10 } = params;
+
+	try {
+		const accessToken = await getAccessToken(athleteId);
+		const afterSeconds = Math.floor(after.getTime() / 1000);
+		const beforeSeconds = before ? Math.floor(before.getTime() / 1000) : undefined;
+
+		const all: StravaActivity[] = [];
+
+		for (let page = 1; page <= maxPages; page += 1) {
+			const url = new URL('https://www.strava.com/api/v3/athlete/activities');
+			url.searchParams.set('per_page', String(perPage));
+			url.searchParams.set('page', String(page));
+			url.searchParams.set('after', String(afterSeconds));
+			if (beforeSeconds !== undefined) {
+				url.searchParams.set('before', String(beforeSeconds));
+			}
+
+			const res = await fetch(url, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				}
+			});
+
+			if (res.status === 401 || res.status === 403) {
+				return {
+					activities: [],
+					needsAuth: true,
+					errorMessage:
+						'Authorization failed or expired. Please re-authorize via the connect button.'
+				};
+			}
+
+			if (!res.ok) {
+				const text = await res.text();
+				return {
+					activities: [],
+					needsAuth: false,
+					errorMessage: `Failed to fetch activities: ${text}`
+				};
+			}
+
+			const pageData = (await res.json()) as StravaActivity[];
+
+			if (!Array.isArray(pageData) || pageData.length === 0) {
+				break;
+			}
+
+			all.push(...pageData);
+
+			if (pageData.length < perPage) {
+				break;
+			}
+		}
+
+		const runningActivities = all.filter((activity) => activity.sport_type === 'Run');
+
+		return {
+			activities: runningActivities,
+			needsAuth: false
+		};
+	} catch (err) {
+		const message = err instanceof Error ? err.message : 'Unknown error';
+
+		if (message.toLowerCase().includes('missing strava client credentials')) {
+			return {
+				activities: [],
+				needsAuth: true,
+				errorMessage:
+					'Credentials are not configured. Set STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET and STRAVA_ACCESS_TOKEN or STRAVA_REFRESH_TOKEN in your .env.'
+			};
+		}
+
+		if (message.toLowerCase().includes('no stored strava tokens')) {
+			return {
+				activities: [],
+				needsAuth: true
+			};
+		}
+
+		return {
+			activities: [],
+			needsAuth: false,
+			errorMessage: message
+		};
+	}
 }
 
 async function fetchHeartRateStatsForActivity(

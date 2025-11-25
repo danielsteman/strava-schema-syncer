@@ -118,6 +118,45 @@ export async function ensureSchema(): Promise<void> {
 			WITH (lists = 100)
 		`);
 
+		// SAF regression storage: raw observation points per athlete/activity.
+		await client.query(`
+			CREATE TABLE IF NOT EXISTS strava_saf_points (
+				id BIGSERIAL PRIMARY KEY,
+				athlete_id TEXT NOT NULL,
+				activity_id BIGINT NOT NULL,
+				activity_date DATE NOT NULL,
+				t_days DOUBLE PRECISION NOT NULL,
+				avg_hr DOUBLE PRECISION NOT NULL,
+				speed_m_per_s DOUBLE PRECISION NOT NULL,
+				created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+				UNIQUE (athlete_id, activity_id)
+			)
+		`);
+
+		await client.query(`
+			CREATE INDEX IF NOT EXISTS strava_saf_points_athlete_date_idx
+			ON strava_saf_points (athlete_id, activity_date)
+		`);
+
+		// SAF regression storage: summary rows per run of the calculation.
+		await client.query(`
+			CREATE TABLE IF NOT EXISTS strava_saf_summaries (
+				id BIGSERIAL PRIMARY KEY,
+				athlete_id TEXT NOT NULL,
+				horizon_days INT NOT NULL,
+				beta0 DOUBLE PRECISION NOT NULL,
+				beta1 DOUBLE PRECISION NOT NULL,
+				beta2 DOUBLE PRECISION NOT NULL,
+				saf_bpm DOUBLE PRECISION NOT NULL,
+				run_at TIMESTAMPTZ NOT NULL DEFAULT now()
+			)
+		`);
+
+		await client.query(`
+			CREATE INDEX IF NOT EXISTS strava_saf_summaries_athlete_run_at_idx
+			ON strava_saf_summaries (athlete_id, run_at DESC)
+		`);
+
 		await client.query('COMMIT');
 		schemaEnsured = true;
 	} catch (err) {
