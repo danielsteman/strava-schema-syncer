@@ -44,6 +44,17 @@
 		return `${km.toFixed(1)} km`;
 	};
 
+	const formatPace = (distanceMeters: number, movingTimeSeconds: number) => {
+		if (!distanceMeters || !movingTimeSeconds) return '–';
+
+		const secondsPerKm = movingTimeSeconds / (distanceMeters / 1000);
+		const minutes = Math.floor(secondsPerKm / 60);
+		const seconds = Math.round(secondsPerKm % 60);
+		const paddedSeconds = String(seconds).padStart(2, '0');
+
+		return `${minutes}:${paddedSeconds} /km`;
+	};
+
 	const formatDuration = (seconds: number) => {
 		const h = Math.floor(seconds / 3600);
 		const m = Math.floor((seconds % 3600) / 60);
@@ -110,6 +121,10 @@
 						<div>
 							<span class="label">Moving time</span>
 							<span>{formatDuration(activity.moving_time)}</span>
+						</div>
+						<div>
+							<span class="label">Pace</span>
+							<span>{formatPace(activity.distance, activity.moving_time)}</span>
 						</div>
 						<div>
 							<span class="label">Elapsed</span>
