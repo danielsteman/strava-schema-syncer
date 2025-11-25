@@ -21,7 +21,15 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "STRAVA_WEBHOOK_VERIFY_TOKEN": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "StravaTokensTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
+    "TelegramUsersTable": {
       "name": string
       "type": "sst.aws.Dynamo"
     }
