@@ -57,9 +57,9 @@ In practice, this is computed using a numerical linear algebra library rather th
 - \(\hat{\beta}\_2 > 0\) indicates that, on a fixed day, higher heart rate is associated with higher speed (as expected physiologically).
 - Statistical significance (e.g. p-values or confidence intervals on \(\hat{\beta}\_1\)) can be used to judge whether the observed trend is likely to be real rather than noise.
 
-### Steman Aerobic Fitness (SAF) coefficient
+### C3T Aerobic Fitness (CAF) coefficient
 
-To summarise long-term aerobic progress in a single number, we can combine \(\hat{\beta}\_1\) and \(\hat{\beta}\_2\) into a **Steman Aerobic Fitness (SAF)** coefficient.
+To summarise long-term aerobic progress in a single number, we can combine \(\hat{\beta}\_1\) and \(\hat{\beta}\_2\) into a **C3T Aerobic Fitness (CAF)** coefficient.
 
 Let \(T\) be a chosen time horizon in days (for example \(T = 90\) days). The model implies that, over \(T\) days, the expected speed gain at a fixed heart rate is:
 

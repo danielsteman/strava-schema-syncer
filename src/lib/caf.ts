@@ -143,7 +143,7 @@ function solveOlsCoefficients(
 }
 
 /**
- * Compute the Steman Aerobic Fitness (SAF) coefficient for a given horizon.
+ * Compute the C3T Aerobic Fitness (CAF) coefficient for a given horizon.
  *
  * SAF_T = (beta1 * T) / beta2
  */

@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { handler as runSaf } from '../../../../functions/strava-saf.ts';
+import { handler as runSaf } from '../../../../functions/strava-caf.ts';
 
 type StravaWebhookEvent = {
 	object_type: string;

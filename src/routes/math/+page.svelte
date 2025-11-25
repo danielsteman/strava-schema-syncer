@@ -5,10 +5,10 @@
 <main class="page">
 	<section class="card">
 		<header class="header">
-			<h1>Steman Aerobic Fitness (SAF) math</h1>
+			<h1>C3T Aerobic Fitness (CAF) math</h1>
 			<p>
-				This page explains the math behind the Steman Aerobic Fitness (SAF) coefficient: how we model
-				your runs, what the regression does, and how to interpret the final number.
+				This page explains the math behind the C3T Aerobic Fitness (CAF) coefficient: how we model your
+				runs, what the regression does, and how to interpret the final number.
 			</p>
 		</header>
 
@@ -96,7 +96,7 @@
 		<section class="section">
 			<h2>The SAF coefficient</h2>
 			<p>
-				The Steman Aerobic Fitness (SAF) coefficient summarises long-term aerobic progress in a
+				The C3T Aerobic Fitness (CAF) coefficient summarises long-term aerobic progress in a
 				single number by combining the time trend <MathBlock expression="β̂_1" /> and the
 				heart-rate sensitivity <MathBlock expression="β̂_2" />.
 			</p>

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { StravaSafEvent } from './strava-saf';
+import type { StravaSafEvent } from './strava-caf';
 
 vi.mock('../lib/db.ts', () => {
 	return {
@@ -53,8 +53,7 @@ vi.mock('../lib/strava.ts', () => {
 		})
 	};
 });
-
-import { handler } from './strava-saf';
+import { handler } from './strava-caf';
 import { query } from '../lib/db.ts';
 import { getActivitiesForPeriod } from '../lib/strava.ts';
 
@@ -89,5 +88,3 @@ describe('strava-saf handler', () => {
 		expect(result.message).toContain('athleteId');
 	});
 });
-
-
