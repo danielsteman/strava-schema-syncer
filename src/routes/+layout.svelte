@@ -41,6 +41,12 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<link
+		rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+		integrity="sha384-hGcndoZ8f9JftKct6W/KiDWuszUst8aZ3F2AKa+DrFAKmbcL4ORQGdiT+f47j9g6"
+		crossorigin="anonymous"
+	/>
 </svelte:head>
 
 <div class="app-shell">

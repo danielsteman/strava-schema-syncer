@@ -1,29 +1,25 @@
 <script lang="ts">
-	import katex from 'katex';
-	import 'katex/dist/katex.min.css';
-
-	const { expression, display = false } = $props<{
-		expression: string;
-		display?: boolean;
-	}>();
-
-	const html = katex.renderToString(expression, {
-		displayMode: display,
-		throwOnError: false
-	});
+	export let expression: string;
+	export let display = false;
 </script>
 
-<span class:display={display} class="katex-wrapper" {@html html}></span>
+<code class={`math-inline${display ? ' math-block' : ''}`}>{expression}</code>
 
 <style>
-	.katex-wrapper {
+	.math-inline {
 		display: inline-block;
+		font-family:
+			ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+			monospace;
+		font-size: 0.9rem;
+		background: rgba(15, 23, 42, 0.9);
+		padding: 0.12rem 0.3rem;
+		border-radius: 0.3rem;
+		border: 1px solid rgba(148, 163, 184, 0.4);
 	}
 
-	.katex-wrapper.display {
+	.math-block {
 		display: block;
 		margin: 0.75rem 0;
 	}
 </style>
-
-

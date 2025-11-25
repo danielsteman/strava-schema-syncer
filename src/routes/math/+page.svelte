@@ -22,7 +22,7 @@
 				<li>
 					A date <code>d_i</code> for observation <code>i</code>, and an elapsed time in days since
 					your first recorded run:
-					<MathBlock expression="t_i = d_i - d_{\text{start}}" />
+					<MathBlock expression="t_i = d_i - d_start" />
 				</li>
 				<li>
 					The average heart rate during that run or segment:
@@ -46,7 +46,7 @@
 				We model speed as a linear function of time and heart rate. For each observation
 				<code>i</code>:
 			</p>
-			<MathBlock expression="y_i = \beta_0 + \beta_1 t_i + \beta_2 hr_i + \varepsilon_i" display />
+			<MathBlock expression="y_i = β_0 + β_1 t_i + β_2 hr_i + ε_i" display />
 			<p>Here:</p>
 			<ul>
 				<li><code>\beta_0</code> is the intercept.</li>
@@ -61,12 +61,9 @@
 				<li><code>\varepsilon_i</code> is random noise.</li>
 			</ul>
 			<p>In matrix form, with design matrix <code>X</code> and target vector <code>y</code>:</p>
-			<MathBlock
-				expression="\hat{\beta} = \arg\min_{\beta} \lVert y - X \beta \rVert^2"
-				display
-			/>
+			<MathBlock expression="β̂ = argmin_β ||y - X β||²" display />
 			<p>Ordinary least squares has the closed-form solution:</p>
-			<MathBlock expression="\hat{\beta} = (X^\top X)^{-1} X^\top y" display />
+			<MathBlock expression="β̂ = (Xᵀ X)^{-1} Xᵀ y" display />
 			<p>
 				In practice, this is computed using a standard numerical linear algebra routine rather than
 				explicitly forming the inverse.
@@ -78,20 +75,20 @@
 			<ul>
 				<li>
 					If
-					<MathBlock expression="\hat{\beta}_1 &gt; 0" />
+					<MathBlock expression="β̂_1 &gt; 0" />
 					, then at a fixed heart rate your speed is increasing over time – you are getting faster
 					for the same effort.
 				</li>
 				<li>
 					If
-					<MathBlock expression="\hat{\beta}_2 &gt; 0" />
+					<MathBlock expression="β̂_2 &gt; 0" />
 					, then on a fixed day higher heart rate is associated with higher speed, which matches our
 					physiological expectations.
 				</li>
 			</ul>
 			<p>
 				We can also look at statistical significance (for example p-values or confidence intervals on
-				<MathBlock expression="\hat{\beta}_1" />) to judge whether the trend is likely to be real
+				<MathBlock expression="β̂_1" />) to judge whether the trend is likely to be real
 				rather than just noise.
 			</p>
 		</section>
@@ -100,34 +97,34 @@
 			<h2>The SAF coefficient</h2>
 			<p>
 				The Steman Aerobic Fitness (SAF) coefficient summarises long-term aerobic progress in a
-				single number by combining the time trend <MathBlock expression="\hat{\beta}_1" /> and the
-				heart-rate sensitivity <MathBlock expression="\hat{\beta}_2" />.
+				single number by combining the time trend <MathBlock expression="β̂_1" /> and the
+				heart-rate sensitivity <MathBlock expression="β̂_2" />.
 			</p>
 			<p>
 				Fix a time horizon <code>T</code> in days (for example
 				<code>T = 90</code>). Over that horizon, the model implies an expected speed gain at a fixed
 				heart rate of:
 			</p>
-			<MathBlock expression="\Delta \text{speed}_{\text{time}}(T) = \hat{\beta}_1 \cdot T" display />
+			<MathBlock expression="Δ speed_time(T) = β̂_1 · T" display />
 			<p>
-				On a fixed day, <MathBlock expression="\hat{\beta}_2" /> describes how speed changes per
+				On a fixed day, <MathBlock expression="β̂_2" /> describes how speed changes per
 				additional beat per minute. The increase in heart rate that would normally produce the same
 				speed gain is:
 			</p>
 			<MathBlock
-				expression="\Delta hr_{\text{equiv}}(T) = \frac{\Delta \text{speed}_{\text{time}}(T)}{\hat{\beta}_2} = \frac{\hat{\beta}_1 \cdot T}{\hat{\beta}_2}"
+				expression="Δ hr_equiv(T) = [Δ speed_time(T)] / β̂_2 = (β̂_1 · T) / β̂_2"
 				display
 			/>
 			<p>
 				We define the SAF coefficient over horizon <code>T</code> as:
 			</p>
-			<MathBlock expression="\text{SAF}_T := \frac{\hat{\beta}_1 \cdot T}{\hat{\beta}_2}" display />
+			<MathBlock expression="SAF_T := (β̂_1 · T) / β̂_2" display />
 			<ul>
 				<li><strong>Units</strong>: beats per minute (bpm).</li>
 				<li>
 					<strong>Interpretation</strong>: over the last <code>T</code> days, you have gained as much
 					speed at the same heart rate as would normally be produced by increasing your heart rate by
-					<MathBlock expression="\text{SAF}_T" /> bpm.
+					<MathBlock expression="SAF_T" /> bpm.
 				</li>
 			</ul>
 			<p>
@@ -150,14 +147,11 @@
 				</li>
 				<li>
 					Use the fitted model to define the regression plane:
-					<MathBlock
-						expression="\hat{y}(t, hr) = \hat{\beta}_0 + \hat{\beta}_1 t + \hat{\beta}_2 hr"
-						display
-					/>
+					<MathBlock expression="ŷ(t, hr) = β̂_0 + β̂_1 t + β̂_2 hr" display />
 				</li>
 				<li>
 					Over a grid of <MathBlock expression="(t, hr)" /> values spanning the observed range,
-					compute <MathBlock expression="\hat{y}(t, hr)" /> and plot this plane through the point
+					compute <MathBlock expression="ŷ(t, hr)" /> and plot this plane through the point
 					cloud.
 				</li>
 			</ul>
