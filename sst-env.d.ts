@@ -9,6 +9,14 @@ declare module "sst" {
       "type": "sst.aws.SvelteKit"
       "url": string
     }
+    "GEMINI_API_KEY": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "POSTGRES_CONNECTION_STRING": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "STRAVA_CLIENT_ID": {
       "type": "sst.sst.Secret"
       "value": string
@@ -21,13 +29,13 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "STRAVA_WEBHOOK_VERIFY_TOKEN": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
     "StravaTokensTable": {
       "name": string
       "type": "sst.aws.Dynamo"
+    }
+    "TELEGRAM_BOT_TOKEN": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
     "TelegramUsersTable": {
       "name": string

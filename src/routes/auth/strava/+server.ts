@@ -1,18 +1,15 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { Resource } from 'sst';
+import { getStravaClientCredentials } from '$lib/strava-credentials';
 
 // Redirects the user to Strava's OAuth authorization page.
 // Docs: https://developers.strava.com/docs/authentication/
 export const GET: RequestHandler = async ({ url }) => {
-	// Access secrets: try SST Resource object first (for deployed), then env vars (for local dev)
-	let STRAVA_CLIENT_ID: string | undefined;
+	let STRAVA_CLIENT_ID: string;
 	try {
-		STRAVA_CLIENT_ID = Resource.STRAVA_CLIENT_ID?.value;
+		({ clientId: STRAVA_CLIENT_ID } = getStravaClientCredentials());
 	} catch {
-		// Resource might not be available in all contexts
+		return new Response('STRAVA_CLIENT_ID is not configured on the server', { status: 500 });
 	}
-	STRAVA_CLIENT_ID = STRAVA_CLIENT_ID ?? env.STRAVA_CLIENT_ID;
 
 	if (!STRAVA_CLIENT_ID) {
 		return new Response('STRAVA_CLIENT_ID is not configured on the server', { status: 500 });

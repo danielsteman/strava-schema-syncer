@@ -1,4 +1,5 @@
-import { env } from '$env/dynamic/private';
+import { Resource } from 'sst';
+import process from 'node:process';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 
@@ -13,7 +14,23 @@ type StravaTokenRow = {
 	athleteFirstName?: string;
 };
 
-const STRAVA_TOKENS_TABLE_NAME = env.STRAVA_TOKENS_TABLE_NAME;
+function getTokensTableName(): string | undefined {
+	let tableName: string | undefined;
+
+	try {
+		const r = Resource as unknown as {
+			StravaTokensTable?: { name: string };
+		};
+		tableName = r.StravaTokensTable?.name;
+	} catch {
+		// Resource may not be available in local non-SST contexts.
+	}
+
+	tableName = tableName ?? process.env.STRAVA_TOKENS_TABLE_NAME;
+	return tableName;
+}
+
+const STRAVA_TOKENS_TABLE_NAME = getTokensTableName();
 const hasTable = Boolean(STRAVA_TOKENS_TABLE_NAME);
 
 // Lazy singleton client; only created when we actually need Dynamo.

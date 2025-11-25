@@ -84,7 +84,6 @@ describe('strava-saf handler', () => {
 	});
 
 	it('fails gracefully when athleteId is missing', async () => {
-		// @ts-expect-error testing runtime validation
 		const result = await handler({} as StravaSafEvent);
 		expect(result.ok).toBe(false);
 		expect(result.message).toContain('athleteId');

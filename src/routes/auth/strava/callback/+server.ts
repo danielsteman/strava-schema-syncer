@@ -1,7 +1,6 @@
 import { redirect, type RequestHandler } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
-import { Resource } from 'sst';
 import { putTokensForAthlete } from '$lib/strava-tokens';
+import { getStravaClientCredentials } from '$lib/strava-credentials';
 
 type StravaTokenResponse = {
 	token_type: string;
@@ -31,17 +30,16 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		return new Response('Missing authorization code from provider', { status: 400 });
 	}
 
-	// Access secrets: try SST Resource object first (for deployed), then env vars (for local dev)
-	let STRAVA_CLIENT_ID: string | undefined;
-	let STRAVA_CLIENT_SECRET: string | undefined;
+	let STRAVA_CLIENT_ID: string;
+	let STRAVA_CLIENT_SECRET: string;
 	try {
-		STRAVA_CLIENT_ID = Resource.STRAVA_CLIENT_ID?.value;
-		STRAVA_CLIENT_SECRET = Resource.STRAVA_CLIENT_SECRET?.value;
+		({ clientId: STRAVA_CLIENT_ID, clientSecret: STRAVA_CLIENT_SECRET } =
+			getStravaClientCredentials());
 	} catch {
-		// Resource might not be available in all contexts
+		return new Response('Client credentials are not configured on the server', {
+			status: 500
+		});
 	}
-	STRAVA_CLIENT_ID = STRAVA_CLIENT_ID ?? env.STRAVA_CLIENT_ID;
-	STRAVA_CLIENT_SECRET = STRAVA_CLIENT_SECRET ?? env.STRAVA_CLIENT_SECRET;
 
 	if (!STRAVA_CLIENT_ID || !STRAVA_CLIENT_SECRET) {
 		return new Response('Client credentials are not configured on the server', {
