@@ -7,8 +7,8 @@
 		<header class="header">
 			<h1>C3T Aerobic Fitness (CAF) math</h1>
 			<p>
-				This page explains the math behind the C3T Aerobic Fitness (CAF) coefficient: how we model your
-				runs, what the regression does, and how to interpret the final number.
+				This page explains the math behind the C3T Aerobic Fitness (CAF) coefficient: how we model
+				your runs, what the regression does, and how to interpret the final number.
 			</p>
 		</header>
 
@@ -76,8 +76,8 @@
 				<li>
 					If
 					<MathBlock expression="β̂_1 &gt; 0" />
-					, then at a fixed heart rate your speed is increasing over time – you are getting faster
-					for the same effort.
+					, then at a fixed heart rate your speed is increasing over time – you are getting faster for
+					the same effort.
 				</li>
 				<li>
 					If
@@ -87,18 +87,19 @@
 				</li>
 			</ul>
 			<p>
-				We can also look at statistical significance (for example p-values or confidence intervals on
-				<MathBlock expression="β̂_1" />) to judge whether the trend is likely to be real
-				rather than just noise.
+				We can also look at statistical significance (for example p-values or confidence intervals
+				on
+				<MathBlock expression="β̂_1" />) to judge whether the trend is likely to be real rather than
+				just noise.
 			</p>
 		</section>
 
 		<section class="section">
-			<h2>The SAF coefficient</h2>
+			<h2>The C3T coefficient</h2>
 			<p>
-				The C3T Aerobic Fitness (CAF) coefficient summarises long-term aerobic progress in a
-				single number by combining the time trend <MathBlock expression="β̂_1" /> and the
-				heart-rate sensitivity <MathBlock expression="β̂_2" />.
+				The C3T Aerobic Fitness (CAF) coefficient summarises long-term aerobic progress in a single
+				number by combining the time trend <MathBlock expression="β̂_1" /> and the heart-rate sensitivity
+				<MathBlock expression="β̂_2" />.
 			</p>
 			<p>
 				Fix a time horizon <code>T</code> in days (for example
@@ -107,28 +108,25 @@
 			</p>
 			<MathBlock expression="Δ speed_time(T) = β̂_1 · T" display />
 			<p>
-				On a fixed day, <MathBlock expression="β̂_2" /> describes how speed changes per
-				additional beat per minute. The increase in heart rate that would normally produce the same
-				speed gain is:
+				On a fixed day, <MathBlock expression="β̂_2" /> describes how speed changes per additional beat
+				per minute. The increase in heart rate that would normally produce the same speed gain is:
 			</p>
-			<MathBlock
-				expression="Δ hr_equiv(T) = [Δ speed_time(T)] / β̂_2 = (β̂_1 · T) / β̂_2"
-				display
-			/>
+			<MathBlock expression="Δ hr_equiv(T) = [Δ speed_time(T)] / β̂_2 = (β̂_1 · T) / β̂_2" display />
 			<p>
-				We define the SAF coefficient over horizon <code>T</code> as:
+				We define the C3T coefficient over horizon <code>T</code> as:
 			</p>
-			<MathBlock expression="SAF_T := (β̂_1 · T) / β̂_2" display />
+			<MathBlock expression="C3T_T := (β̂_1 · T) / β̂_2" display />
 			<ul>
 				<li><strong>Units</strong>: beats per minute (bpm).</li>
 				<li>
-					<strong>Interpretation</strong>: over the last <code>T</code> days, you have gained as much
-					speed at the same heart rate as would normally be produced by increasing your heart rate by
-					<MathBlock expression="SAF_T" /> bpm.
+					<strong>Interpretation</strong>: over the last <code>T</code> days, you have gained as
+					much speed at the same heart rate as would normally be produced by increasing your heart
+					rate by
+					<MathBlock expression="C3T_T" /> bpm.
 				</li>
 			</ul>
 			<p>
-				In practice, the app can compute SAF for a fixed horizon such as
+				In practice, the app can compute C3T for a fixed horizon such as
 				<code>T = 90</code> days and optionally smooth it over rolling windows to reduce noise.
 			</p>
 		</section>
@@ -150,9 +148,8 @@
 					<MathBlock expression="ŷ(t, hr) = β̂_0 + β̂_1 t + β̂_2 hr" display />
 				</li>
 				<li>
-					Over a grid of <MathBlock expression="(t, hr)" /> values spanning the observed range,
-					compute <MathBlock expression="ŷ(t, hr)" /> and plot this plane through the point
-					cloud.
+					Over a grid of <MathBlock expression="(t, hr)" /> values spanning the observed range, compute
+					<MathBlock expression="ŷ(t, hr)" /> and plot this plane through the point cloud.
 				</li>
 			</ul>
 			<p>
@@ -228,8 +225,9 @@
 	}
 
 	code {
-		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-			'Courier New', monospace;
+		font-family:
+			ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+			monospace;
 		font-size: 0.85rem;
 		background: rgba(15, 23, 42, 0.9);
 		padding: 0.12rem 0.3rem;
@@ -243,5 +241,3 @@
 		}
 	}
 </style>
-
-
