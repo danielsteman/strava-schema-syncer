@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { StravaSafEvent } from './strava-caf';
+import type { StravaCafEvent } from './strava-caf';
 
 vi.mock('../lib/db.ts', () => {
 	return {
@@ -57,9 +57,9 @@ import { handler } from './strava-caf';
 import { query } from '../lib/db.ts';
 import { getActivitiesForPeriod } from '../lib/strava.ts';
 
-describe('strava-saf handler', () => {
-	it('computes SAF and writes points and a summary', async () => {
-		const event: StravaSafEvent = {
+describe('strava-caf handler', () => {
+	it('computes CAF and writes points and a summary', async () => {
+		const event: StravaCafEvent = {
 			athleteId: 'athlete-123',
 			horizonDays: 30
 		};
@@ -69,7 +69,7 @@ describe('strava-saf handler', () => {
 		expect(result.ok).toBe(true);
 		expect(result.athleteId).toBe('athlete-123');
 		expect(result.observationCount).toBeGreaterThanOrEqual(3);
-		expect(result.safBpm).toBeGreaterThan(0);
+		expect(result.cafBpm).toBeGreaterThan(0);
 
 		const queryMock = vi.mocked(query);
 		const calls = queryMock.mock.calls;
@@ -83,7 +83,7 @@ describe('strava-saf handler', () => {
 	});
 
 	it('fails gracefully when athleteId is missing', async () => {
-		const result = await handler({} as StravaSafEvent);
+		const result = await handler({} as StravaCafEvent);
 		expect(result.ok).toBe(false);
 		expect(result.message).toContain('athleteId');
 	});

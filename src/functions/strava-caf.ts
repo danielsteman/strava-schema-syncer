@@ -4,24 +4,24 @@ import { buildSafObservations, computeSaf } from '../lib/caf.ts';
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
-export type StravaSafEvent = {
+export type StravaCafEvent = {
 	athleteId: string;
 	horizonDays?: number;
 };
 
-export type StravaSafResult = {
+export type StravaCafResult = {
 	ok: boolean;
 	message?: string;
 	athleteId?: string;
 	horizonDays?: number;
 	observationCount?: number;
-	safBpm?: number;
+	cafBpm?: number;
 	beta0?: number;
 	beta1?: number;
 	beta2?: number;
 };
 
-export async function handler(event: StravaSafEvent): Promise<StravaSafResult> {
+export async function handler(event: StravaCafEvent): Promise<StravaCafResult> {
 	const { athleteId, horizonDays: horizonOverride } = event;
 
 	if (!athleteId || typeof athleteId !== 'string') {
@@ -79,7 +79,7 @@ export async function handler(event: StravaSafEvent): Promise<StravaSafResult> {
 		};
 	}
 
-	const safResult = computeSaf(observations, horizonDays);
+	const cafResult = computeSaf(observations, horizonDays);
 
 	// Persist raw observation points (idempotent per athlete/activity).
 	for (const obs of observations) {
@@ -112,17 +112,17 @@ export async function handler(event: StravaSafEvent): Promise<StravaSafResult> {
 		);
 	}
 
-	if (safResult.kind !== 'success') {
+	if (cafResult.kind !== 'success') {
 		return {
 			ok: false,
 			athleteId,
 			horizonDays,
-			observationCount: safResult.observationCount,
-			message: safResult.reason
+			observationCount: cafResult.observationCount,
+			message: cafResult.reason
 		};
 	}
 
-	const { beta0, beta1, beta2, safBpm } = safResult;
+	const { beta0, beta1, beta2, safBpm: cafBpm } = cafResult;
 
 	await query(
 		`
@@ -136,15 +136,15 @@ export async function handler(event: StravaSafEvent): Promise<StravaSafResult> {
 		)
 		VALUES ($1, $2, $3, $4, $5, $6)
 	`,
-		[athleteId, horizonDays, beta0, beta1, beta2, safBpm]
+		[athleteId, horizonDays, beta0, beta1, beta2, cafBpm]
 	);
 
 	return {
 		ok: true,
 		athleteId,
 		horizonDays,
-		observationCount: safResult.observationCount,
-		safBpm,
+		observationCount: cafResult.observationCount,
+		cafBpm,
 		beta0,
 		beta1,
 		beta2
