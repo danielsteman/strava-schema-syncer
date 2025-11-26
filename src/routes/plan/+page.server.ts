@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import rawSchema from '../../data/marathon-schema.json' with { type: 'json' };
-import { getRecentActivities } from '$lib/strava';
-import type { EnrichedActivity } from '$lib/strava';
+import { getRecentActivities } from '$lib/strava/strava';
+import type { EnrichedActivity } from '$lib/strava/strava';
 
 type MarathonWeek = {
 	week_begin: string;

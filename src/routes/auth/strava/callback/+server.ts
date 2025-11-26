@@ -1,6 +1,6 @@
 import { redirect, type RequestHandler } from '@sveltejs/kit';
-import { putTokensForAthlete } from '$lib/strava-tokens';
-import { getStravaClientCredentials } from '$lib/strava-credentials';
+import { putTokensForAthlete } from '$lib/strava/strava-tokens';
+import { getStravaClientCredentials } from '$lib/strava/strava-credentials';
 
 type StravaTokenResponse = {
 	token_type: string;

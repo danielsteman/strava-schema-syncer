@@ -1,10 +1,10 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
-import type { TelegramUpdate } from '$lib/telegram';
-import { sendMessage } from '$lib/telegram';
-import { upsertTelegramUser } from '$lib/telegram-users';
+import type { TelegramUpdate } from '$lib/messaging/telegram';
+import { sendMessage } from '$lib/messaging/telegram';
+import { upsertTelegramUser } from '$lib/messaging/telegram-users';
 import { getOrCreateUserByTelegramChatId, insertMessage } from '$lib/messages';
-import { generateDailyCoachMessage } from '$lib/ai-coach';
+import { generateDailyCoachMessage } from '$lib/ai/ai-coach';
 
 const START_COMMAND = '/start';
 

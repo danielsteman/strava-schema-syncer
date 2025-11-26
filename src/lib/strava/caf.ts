@@ -1,4 +1,4 @@
-import type { StravaActivity } from '$lib/strava';
+import type { StravaActivity } from '$lib/strava/strava';
 
 export type SafObservation = {
 	activityId: number;

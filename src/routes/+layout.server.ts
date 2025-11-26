@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import { getTokensForAthlete } from '$lib/strava-tokens.ts';
+import { getTokensForAthlete } from '$lib/strava/strava-tokens.ts';
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
 	const athleteId = cookies.get('strava_athlete_id') ?? undefined;

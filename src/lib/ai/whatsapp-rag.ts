@@ -1,5 +1,5 @@
 import { query } from '$lib/db';
-import { embedTexts } from '$lib/gemini-embeddings';
+import { embedTexts } from '$lib/ai/gemini-embeddings';
 
 export type WhatsappChunkRow = {
 	id: number;

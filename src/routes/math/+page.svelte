@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MathBlock from '$lib/MathBlock.svelte';
+	import MathBlock from '$lib/ui/MathBlock.svelte';
 </script>
 
 <main class="page">

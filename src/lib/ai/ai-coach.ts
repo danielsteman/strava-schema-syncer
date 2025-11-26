@@ -1,6 +1,6 @@
 import { Resource } from 'sst';
 import process from 'node:process';
-import { getRecentActivities, type EnrichedActivity } from '$lib/strava';
+import { getRecentActivities, type EnrichedActivity } from '$lib/strava/strava';
 
 export type DailyCoachInput = {
 	athleteId: string;

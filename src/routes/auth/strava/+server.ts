@@ -1,5 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { getStravaClientCredentials } from '$lib/strava-credentials';
+import { getStravaClientCredentials } from '$lib/strava/strava-credentials';
 
 // Redirects the user to Strava's OAuth authorization page.
 // Docs: https://developers.strava.com/docs/authentication/

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { StravaActivity } from '$lib/strava';
-import { buildSafObservations, computeSaf } from './caf';
+import type { StravaActivity } from '$lib/strava/strava';
+import { buildSafObservations, computeSaf } from './strava/caf';
 
 function makeActivity(
 	startDateIso: string,

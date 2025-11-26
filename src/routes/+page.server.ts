@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getRecentActivities } from '$lib/strava';
+import { getRecentActivities } from '$lib/strava/strava';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const athleteId = cookies.get('strava_athlete_id') ?? undefined;

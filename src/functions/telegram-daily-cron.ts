@@ -1,6 +1,6 @@
-import { listTelegramUsers } from '$lib/telegram-users';
-import { generateDailyCoachMessage } from '$lib/ai-coach';
-import { sendMessage } from '$lib/telegram';
+import { listTelegramUsers } from '$lib/messaging/telegram-users';
+import { generateDailyCoachMessage } from '$lib/ai/ai-coach';
+import { sendMessage } from '$lib/messaging/telegram';
 
 function getLocalDateParts(
 	timezone: string | null | undefined,
@@ -62,7 +62,7 @@ export async function handler(): Promise<void> {
 				updatedAt: now.toISOString()
 			};
 			// Inline import to avoid circular deps in some bundlers.
-			const { putTelegramUser } = await import('$lib/telegram-users');
+			const { putTelegramUser } = await import('$lib/messaging/telegram-users');
 			// eslint-disable-next-line @typescript-eslint/no-floating-promises
 			putTelegramUser(updated);
 		} catch (err) {
