@@ -1,4 +1,3 @@
-import { env } from '$env/dynamic/private';
 import { Resource } from 'sst';
 
 type StravaResources = {
@@ -10,6 +9,8 @@ export function getStravaClientCredentials(): { clientId: string; clientSecret: 
 	let clientId: string | undefined;
 	let clientSecret: string | undefined;
 
+	// Use SST Resource (works in both SST functions and SvelteKit routes)
+	// Both have access to linked secrets via Resource
 	try {
 		const resources = Resource as StravaResources;
 		clientId = resources.STRAVA_CLIENT_ID?.value;
@@ -17,9 +18,6 @@ export function getStravaClientCredentials(): { clientId: string; clientSecret: 
 	} catch {
 		// Resource might not be available in all contexts (eg local scripts)
 	}
-
-	clientId = clientId ?? env.STRAVA_CLIENT_ID;
-	clientSecret = clientSecret ?? env.STRAVA_CLIENT_SECRET;
 
 	if (!clientId || !clientSecret) {
 		throw new Error('Missing Strava client credentials');

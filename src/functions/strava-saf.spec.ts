@@ -56,7 +56,7 @@ vi.mock('../lib/strava.ts', () => {
 
 import { handler } from './strava-saf';
 import { query } from '../lib/db.ts';
-import { getActivitiesForPeriod } from '../lib/strava.ts';
+import { getActivitiesForPeriod } from '../lib/strava/strava.ts';
 
 describe('strava-saf handler', () => {
 	it('computes SAF and writes points and a summary', async () => {

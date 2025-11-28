@@ -62,7 +62,7 @@
 				<a href="/">Home</a>
 				{#if data.user}
 					<a href="/plan">Plan</a>
-					<a href="/math">SAF math</a>
+					<a href="/math">Math</a>
 				{/if}
 				<a href="/support">Support</a>
 			</nav>

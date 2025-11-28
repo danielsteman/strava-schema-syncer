@@ -1,5 +1,5 @@
 import { ensureSchema, query } from '../lib/db.ts';
-import { getActivitiesForPeriod } from '../lib/strava.ts';
+import { getActivitiesForPeriod } from '../lib/strava/strava.ts';
 import { buildSafObservations, computeSaf } from '../lib/caf.ts';
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
